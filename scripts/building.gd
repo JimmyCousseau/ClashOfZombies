@@ -302,6 +302,20 @@ func take_damage(amount: int) -> void:
 		_destroyed()
 
 
+func repair(amount: int) -> int:
+	var old_hp := hp
+	hp = mini(max_hp, hp + amount)
+	var healed := hp - old_hp
+	if label_3d:
+		label_3d.text = "%s\n%d" % [_type_name(), hp]
+	return healed
+
+
+func get_repair_cost(amount: int) -> int:
+	var cost_per_hp: float = GameState.REPAIR_COST_PER_HP.get(building_type, 1.0)
+	return int(ceil(amount * cost_per_hp))
+
+
 func _exit_tree() -> void:
 	match building_type:
 		BuildingType.GOLD_STORAGE:

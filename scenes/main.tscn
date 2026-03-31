@@ -270,6 +270,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Barbare (50 él.)"
 
+[node name="HSeparator" type="HSeparator" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="BtnRepairAll" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+text = "Réparer tout"
+
 [node name="Hint" type="Label" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.72, 0.65, 1)

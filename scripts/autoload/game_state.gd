@@ -27,6 +27,20 @@ const BUILD_COST: Dictionary = {
 	VillageBuilding.BuildingType.GOLD_STORAGE: {"gold": 120, "elixir": 120},
 	VillageBuilding.BuildingType.ELIXIR_STORAGE: {"gold": 120, "elixir": 120},
 	VillageBuilding.BuildingType.FARM: {"gold": 180, "elixir": 140},
+	VillageBuilding.BuildingType.DOOR: {"gold": 0, "elixir": 300},
+}
+
+# Repair cost in elixir per HP restored (varies by building type)
+const REPAIR_COST_PER_HP: Dictionary = {
+	VillageBuilding.BuildingType.TOWN_HALL: 1.5,
+	VillageBuilding.BuildingType.GOLD_MINE: 0.8,
+	VillageBuilding.BuildingType.ELIXIR_COLLECTOR: 0.8,
+	VillageBuilding.BuildingType.CANNON: 1.2,
+	VillageBuilding.BuildingType.BARRACKS: 1.0,
+	VillageBuilding.BuildingType.GOLD_STORAGE: 0.9,
+	VillageBuilding.BuildingType.ELIXIR_STORAGE: 0.9,
+	VillageBuilding.BuildingType.FARM: 0.7,
+	VillageBuilding.BuildingType.DOOR: 1.0,
 }
 
 const PRODUCTION: Dictionary = {

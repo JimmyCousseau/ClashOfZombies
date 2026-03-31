@@ -10,6 +10,7 @@ extends Control
 @onready var top_bar: PanelContainer = $TopBar
 @onready var toggle_btn: Button = $TopBar/MarginContainer/HBoxContainer/ToggleBuildBar
 @onready var bottom_dock: Control = $BottomDock
+@onready var repair_btn: Button = $BottomDock/PanelContainer/MarginContainer/VBox/BtnRepairAll
 
 var _mode: VillageBuilding.BuildingType = VillageBuilding.BuildingType.GOLD_MINE
 var _wave_manager: Node3D = null
@@ -30,6 +31,7 @@ func _ready() -> void:
 	_style_bottom_panel()
 	_style_toggle_button()
 	toggle_btn.pressed.connect(_on_toggle_build_bar)
+	repair_btn.pressed.connect(_on_btn_repair_all)
 	GameState.wave_started.connect(_on_wave)
 	GameState.game_over.connect(_on_game_over)
 	GameState.resources_changed.connect(_refresh_resources)
@@ -212,3 +214,9 @@ func _on_btn_train() -> void:
 
 func _on_toggle_build_bar() -> void:
 	bottom_dock.visible = not bottom_dock.visible
+
+
+func _on_btn_repair_all() -> void:
+	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
+	if village and village.has_method("repair_all"):
+		village.repair_all()

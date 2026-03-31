@@ -135,3 +135,44 @@ func _on_production_timer() -> void:
 
 func get_buildings_snapshot() -> Array[VillageBuilding]:
 	return _buildings.duplicate()
+
+
+func repair_all() -> void:
+	# Get all buildings that need repair, sorted by HP (lowest first)
+	var damaged_buildings: Array[VillageBuilding] = []
+	for b in _buildings:
+		if is_instance_valid(b) and b.hp < b.max_hp:
+			damaged_buildings.append(b)
+	
+	if damaged_buildings.is_empty():
+		return
+	
+	# Sort by lowest HP first (prioritize most damaged)
+	damaged_buildings.sort_custom(func(a, b): return a.hp < b.hp)
+	
+	var available_elixir: int = GameState.elixir
+	
+	# Try to repair each building in order
+	for building in damaged_buildings:
+		if available_elixir <= 0:
+			break
+		
+		var missing_hp: int = building.max_hp - building.hp
+		var repair_cost: int = building.get_repair_cost(missing_hp)
+		
+		if repair_cost <= available_elixir:
+			# Can afford full repair
+			building.repair(missing_hp)
+			GameState.spend({"gold": 0, "elixir": repair_cost})
+			available_elixir -= repair_cost
+		else:
+			# Partial repair with remaining elixir
+			# Calculate how much HP we can restore with available elixir
+			var cost_per_hp: float = GameState.REPAIR_COST_PER_HP.get(building.building_type, 1.0)
+			var restorable_hp: int = int(available_elixir / cost_per_hp)
+			
+			if restorable_hp > 0:
+				building.repair(restorable_hp)
+				var actual_cost: int = building.get_repair_cost(restorable_hp)
+				GameState.spend({"gold": 0, "elixir": actual_cost})
+				available_elixir -= actual_cost
