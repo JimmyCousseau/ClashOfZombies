@@ -10,6 +10,7 @@ enum BuildingType {
 	GOLD_STORAGE,
 	ELIXIR_STORAGE,
 	FARM,
+	DOOR,
 }
 
 @export var building_type: BuildingType = BuildingType.GOLD_MINE
@@ -20,6 +21,8 @@ var hp: int = 200
 @onready var mesh_root: Node3D = $MeshRoot
 @onready var label_3d: Label3D = $MeshRoot/Label3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
+
+var cannon_barrel: MeshInstance3D = null
 
 
 func _ready() -> void:
@@ -46,6 +49,8 @@ func _default_hp() -> int:
 			return 320
 		BuildingType.FARM:
 			return 220
+		BuildingType.DOOR:
+			return 600
 		_:
 			return 250
 
@@ -68,6 +73,8 @@ func _type_name() -> String:
 			return "Réservoir"
 		BuildingType.FARM:
 			return "Ferme"
+		BuildingType.DOOR:
+			return "Porte"
 	return "?"
 
 
@@ -130,6 +137,8 @@ func _apply_visual() -> void:
 			top_y = _build_elixir_storage()
 		BuildingType.FARM:
 			top_y = _build_farm()
+		BuildingType.DOOR:
+			top_y = _build_door()
 	if label_3d:
 		label_3d.position = Vector3(0, top_y + 0.35, 0)
 	_set_collision_for_type()
@@ -162,6 +171,9 @@ func _set_collision_for_type() -> void:
 		BuildingType.FARM:
 			box.size = Vector3(2.8, 1.4, 2.8)
 			collision_shape.position = Vector3(0, 0.65, 0)
+		BuildingType.DOOR:
+			box.size = Vector3(1.5, 2.2, 0.8)
+			collision_shape.position = Vector3(0, 1.1, 0)
 	collision_shape.shape = box
 
 
@@ -210,16 +222,16 @@ func _build_cannon() -> float:
 	var metal := _mat(Color(0.22, 0.23, 0.26), 0.35, 0.65)
 	_add_cylinder(mesh_root, Vector3(0, 0.35, 0), 0.95, 0.65, stone)
 	_add_cylinder(mesh_root, Vector3(0, 0.85, 0), 0.35, 0.45, stone)
-	var barrel := MeshInstance3D.new()
+	cannon_barrel = MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 0.22
 	cyl.bottom_radius = 0.28
 	cyl.height = 1.35
-	barrel.mesh = cyl
-	barrel.material_override = metal
-	barrel.position = Vector3(0.55, 0.95, 0)
-	barrel.rotation_degrees = Vector3(0, 0, 82)
-	mesh_root.add_child(barrel)
+	cannon_barrel.mesh = cyl
+	cannon_barrel.material_override = metal
+	cannon_barrel.position = Vector3(0.55, 0.95, 0)
+	cannon_barrel.rotation_degrees = Vector3(0, 0, 82)
+	mesh_root.add_child(cannon_barrel)
 	_add_box(mesh_root, Vector3(-0.15, 1.05, 0), Vector3(0.45, 0.35, 0.35), metal)
 	return 1.45
 
@@ -273,6 +285,15 @@ func _build_farm() -> float:
 	return 1.45
 
 
+func _build_door() -> float:
+	var wood := _mat(Color(0.35, 0.22, 0.1))
+	var metal := _mat(Color(0.18, 0.18, 0.2), 0.3, 0.6)
+	_add_box(mesh_root, Vector3(0, 0.15, 0), Vector3(1.5, 0.3, 0.8), metal)
+	_add_box(mesh_root, Vector3(0, 0.65, 0), Vector3(1.2, 1.0, 0.6), wood)
+	_add_cylinder(mesh_root, Vector3(0.65, 0.65, 0), 0.08, 0.15, metal, Vector3(0, 0, 90))
+	return 1.1
+
+
 func take_damage(amount: int) -> void:
 	hp = maxi(0, hp - amount)
 	if label_3d:
@@ -295,6 +316,11 @@ func _exit_tree() -> void:
 
 
 func _destroyed() -> void:
-	if building_type == BuildingType.TOWN_HALL:
-		GameState.game_over.emit()
+	match building_type:
+		BuildingType.TOWN_HALL:
+			GameState.game_over.emit()
+		BuildingType.DOOR:
+			GameState.door_destroyed.emit()
+		_:
+			pass
 	queue_free()

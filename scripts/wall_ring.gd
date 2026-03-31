@@ -13,8 +13,15 @@ func _ready() -> void:
 	var h: float = GameState.WALL_HEIGHT
 	var y: float = h * 0.5 - 0.02
 	var span: float = 2.0 * inner + 2.0 * w
+	
 	_add_wall(Vector3(0, y, -(inner + w * 0.5)), Vector3(span, h, w))
-	_add_wall(Vector3(0, y, (inner + w * 0.5)), Vector3(span, h, w))
+	
+	var door_width: float = 1.5
+	var left_span: float = inner - door_width * 0.5
+	var right_span: float = inner - door_width * 0.5
+	_add_wall(Vector3(-(door_width * 0.5 + left_span * 0.5), y, (inner + w * 0.5)), Vector3(left_span, h, w))
+	_add_wall(Vector3((door_width * 0.5 + right_span * 0.5), y, (inner + w * 0.5)), Vector3(right_span, h, w))
+	
 	_add_wall(Vector3(-(inner + w * 0.5), y, 0), Vector3(w, h, span))
 	_add_wall(Vector3((inner + w * 0.5), y, 0), Vector3(w, h, span))
 

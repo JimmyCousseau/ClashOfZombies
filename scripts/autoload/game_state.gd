@@ -4,6 +4,7 @@ extends Node
 signal resources_changed
 signal wave_started(wave_index: int)
 signal game_over
+signal door_destroyed
 
 const GRID_SIZE := Vector2i(14, 14)
 const CELL_SIZE := 2.0
@@ -47,6 +48,11 @@ var is_paused: bool = false
 
 func get_inner_half_extent() -> float:
 	return float(GRID_SIZE.x) * CELL_SIZE * 0.5
+
+
+## Position of the door on the wall (front of village, south side)
+func get_door_position() -> Vector3:
+	return Vector3(0, 0, get_inner_half_extent() + WALL_THICKNESS * 0.5)
 
 
 ## Rayon du cercle où les zombies tournent (hors muraille).

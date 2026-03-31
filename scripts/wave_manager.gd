@@ -9,20 +9,28 @@ const UNIT_SCENE := preload("res://scenes/unit.tscn")
 
 var _wave: int = 0
 var _time_to_next: float = 0.0
+var _wave_active: bool = false
 
 
 func _ready() -> void:
 	_time_to_next = first_wave_delay
+	add_to_group("wave_manager")
 	GameState.game_over.connect(_on_game_over)
 
 
 func _process(delta: float) -> void:
 	if GameState.is_paused:
 		return
+	
+	if _wave_active:
+		if GameState.enemies_alive <= 0:
+			_wave_active = false
+			_time_to_next = interval_sec
+		return
+	
 	_time_to_next -= delta
 	if _time_to_next > 0.0:
 		return
-	_time_to_next = interval_sec
 	_spawn_wave()
 
 
@@ -32,15 +40,25 @@ func _on_game_over() -> void:
 
 func _spawn_wave() -> void:
 	_wave += 1
+	_wave_active = true
+	_time_to_next = 0.0
 	GameState.wave_started.emit(_wave)
 	var n: int = base_count + _wave
-	var r: float = GameState.get_patrol_ring_radius()
+	var door_pos: Vector3 = GameState.get_door_position()
 	for i in n:
-		var ang: float = randf() * TAU
 		var u: Unit = UNIT_SCENE.instantiate()
 		u.allegiance = Unit.Allegiance.ENEMY
 		u.hp = 55 + _wave * 5
 		u.max_hp = u.hp
 		add_child(u)
-		u.global_position = Vector3(cos(ang) * r, 0.0, sin(ang) * r)
+		var offset_angle: float = randf() * TAU
+		var offset_dist: float = 5.0 + randf() * 3.0
+		var offset: Vector3 = Vector3(cos(offset_angle) * offset_dist, 0, sin(offset_angle) * offset_dist)
+		u.global_position = door_pos + offset
 		u.setup_zombie_patrol()
+
+
+func get_time_to_next() -> float:
+	if _wave_active:
+		return 0.0
+	return maxf(0.0, _time_to_next)

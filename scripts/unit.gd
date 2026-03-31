@@ -20,6 +20,10 @@ var _patrol_index: int = 0
 
 @onready var mesh_root: Node3D = $MeshRoot
 
+var _health_bar_container: Node3D = null
+var _health_bar_bg: MeshInstance3D = null
+var _health_bar_fill: MeshInstance3D = null
+
 
 func _ready() -> void:
 	if allegiance == Allegiance.ENEMY:
@@ -30,6 +34,7 @@ func _ready() -> void:
 		add_to_group("allies")
 		_build_barbarian_visual()
 		_pick_target()
+	_create_health_bar()
 
 
 func setup_zombie_patrol() -> void:
@@ -206,27 +211,18 @@ func _physics_process(delta: float) -> void:
 	if allegiance == Allegiance.PLAYER:
 		_physics_player(delta)
 	else:
-		_physics_zombie_patrol(delta)
+		_physics_zombie(delta)
 
 
-func _physics_zombie_patrol(delta: float) -> void:
-	if _patrol_waypoints.is_empty():
-		velocity = Vector3.ZERO
-		move_and_slide()
-		global_position.y = 0.0
-		return
-	var target: Vector3 = _patrol_waypoints[_patrol_index]
-	var flat: Vector3 = Vector3(target.x, global_position.y, target.z)
-	var to_t: Vector3 = flat - global_position
-	var dist: float = to_t.length()
-	if dist < 1.05:
-		_patrol_index = (_patrol_index + 1) % _patrol_waypoints.size()
+func _physics_zombie(delta: float) -> void:
+	_check_zombie_target()
+	
+	if _target_building:
+		_attack_building(delta)
+	elif _target_enemy:
+		_move_to_target(delta, _target_enemy.global_position)
 	else:
-		velocity = to_t.normalized() * move_speed
-		move_and_slide()
-	global_position.y = 0.0
-	if mesh_root:
-		mesh_root.rotation_degrees.z = sin(Time.get_ticks_msec() * 0.007) * 5.0
+		_patrol(delta)
 
 
 func _physics_player(delta: float) -> void:
@@ -256,6 +252,90 @@ func _physics_player(delta: float) -> void:
 	global_position.y = 0.0
 
 
+func _patrol(delta: float) -> void:
+	if _patrol_waypoints.is_empty():
+		velocity = Vector3.ZERO
+		move_and_slide()
+		global_position.y = 0.0
+		return
+	var target: Vector3 = _patrol_waypoints[_patrol_index]
+	var flat: Vector3 = Vector3(target.x, global_position.y, target.z)
+	var to_t: Vector3 = flat - global_position
+	var dist: float = to_t.length()
+	if dist < 1.05:
+		_patrol_index = (_patrol_index + 1) % _patrol_waypoints.size()
+	else:
+		velocity = to_t.normalized() * move_speed
+		move_and_slide()
+	global_position.y = 0.0
+	if mesh_root:
+		mesh_root.rotation_degrees.z = sin(Time.get_ticks_msec() * 0.007) * 5.0
+
+
+func _move_to_target(delta: float, target_pos: Vector3) -> void:
+	var flat: Vector3 = Vector3(target_pos.x, global_position.y, target_pos.z)
+	var to_t: Vector3 = flat - global_position
+	var dist: float = to_t.length()
+	
+	velocity = to_t.normalized() * move_speed
+	move_and_slide()
+	global_position.y = 0.0
+
+
+func _attack_building(delta: float) -> void:
+	if not is_instance_valid(_target_building):
+		_target_building = null
+		return
+	
+	var bp: Vector3 = _target_building.global_position
+	var flat: Vector3 = Vector3(bp.x, global_position.y, bp.z)
+	var to_t: Vector3 = flat - global_position
+	var dist: float = to_t.length()
+	
+	if dist <= attack_range:
+		velocity = Vector3.ZERO
+		move_and_slide()
+		_attack_acc += delta
+		if _attack_acc >= attack_cooldown:
+			_attack_acc = 0.0
+			_target_building.take_damage(attack_damage)
+	else:
+		velocity = to_t.normalized() * move_speed
+		move_and_slide()
+	global_position.y = 0.0
+
+
+func _check_zombie_target() -> void:
+	if allegiance != Allegiance.ENEMY:
+		return
+	
+	_target_building = null
+	_target_enemy = null
+	
+	var door: VillageBuilding = null
+	var closest_building: VillageBuilding = null
+	var closest_building_dist: float = 1e12
+	
+	var village: Node3D = get_tree().get_first_node_in_group("village")
+	if village:
+		for child in village.get_children():
+			var b := child as VillageBuilding
+			if b and is_instance_valid(b):
+				var d: float = global_position.distance_squared_to(b.global_position)
+				if b.building_type == VillageBuilding.BuildingType.DOOR:
+					door = b
+				if d < closest_building_dist:
+					closest_building_dist = d
+					closest_building = b
+	
+	if door and is_instance_valid(door):
+		_target_building = door
+		return
+	
+	if closest_building and is_instance_valid(closest_building):
+		_target_building = closest_building
+
+
 func _pick_target() -> void:
 	_target_building = null
 	_target_enemy = null
@@ -274,7 +354,44 @@ func _pick_target() -> void:
 
 func take_damage(amount: int) -> void:
 	hp = maxi(0, hp - amount)
+	_update_health_bar()
 	if hp <= 0:
 		if allegiance == Allegiance.ENEMY:
 			GameState.unregister_enemy()
 		queue_free()
+
+
+func _create_health_bar() -> void:
+	_health_bar_container = Node3D.new()
+	_health_bar_container.position = Vector3(0, 1.2, 0)
+	add_child(_health_bar_container)
+	
+	_health_bar_bg = MeshInstance3D.new()
+	var bg_mesh := BoxMesh.new()
+	bg_mesh.size = Vector3(0.8, 0.15, 0.05)
+	_health_bar_bg.mesh = bg_mesh
+	var bg_mat := StandardMaterial3D.new()
+	bg_mat.albedo_color = Color(0.2, 0.2, 0.2, 0.9)
+	_health_bar_bg.material_override = bg_mat
+	_health_bar_container.add_child(_health_bar_bg)
+	
+	_health_bar_fill = MeshInstance3D.new()
+	var fill_mesh := BoxMesh.new()
+	fill_mesh.size = Vector3(0.8, 0.15, 0.06)
+	_health_bar_fill.mesh = fill_mesh
+	var fill_mat := StandardMaterial3D.new()
+	fill_mat.albedo_color = Color(0.1, 0.9, 0.1)
+	_health_bar_fill.material_override = fill_mat
+	_health_bar_fill.position.z = 0.03
+	_health_bar_container.add_child(_health_bar_fill)
+	
+	_update_health_bar()
+
+
+func _update_health_bar() -> void:
+	if not is_instance_valid(_health_bar_fill):
+		return
+	var health_ratio: float = float(hp) / float(maxi(1, max_hp))
+	var fill_mesh := _health_bar_fill.mesh as BoxMesh
+	fill_mesh.size.x = 0.8 * health_ratio
+	_health_bar_fill.position.x = (0.8 * health_ratio - 0.8) * 0.5

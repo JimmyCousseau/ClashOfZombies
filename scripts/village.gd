@@ -12,6 +12,7 @@ var _buildings: Array[VillageBuilding] = []
 
 func _ready() -> void:
 	_place_starter_town_hall()
+	_place_starter_door()
 	$ProductionTimer.timeout.connect(_on_production_timer)
 
 
@@ -29,6 +30,15 @@ func notify_building_removed(c: Vector2i, b: VillageBuilding) -> void:
 func _place_starter_town_hall() -> void:
 	var center := Vector2i(GameState.GRID_SIZE.x / 2, GameState.GRID_SIZE.y / 2)
 	_spawn_building_at_cell(VillageBuilding.BuildingType.TOWN_HALL, center, true)
+
+
+func _place_starter_door() -> void:
+	var b: VillageBuilding = BUILDING_SCENE.instantiate()
+	b.building_type = VillageBuilding.BuildingType.DOOR
+	b.cell = Vector2i.ZERO
+	b.position = GameState.get_door_position()
+	add_child(b)
+	_buildings.append(b)
 
 
 func _spawn_building_at_cell(t: VillageBuilding.BuildingType, cell: Vector2i, free: bool) -> void:

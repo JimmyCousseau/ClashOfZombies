@@ -8,8 +8,12 @@ extends Control
 @onready var overlay_label: Label = $GameOverOverlay/Center/Label
 @onready var bottom_panel: PanelContainer = $BottomDock/PanelContainer
 @onready var top_bar: PanelContainer = $TopBar
+@onready var toggle_btn: Button = $TopBar/MarginContainer/HBoxContainer/ToggleBuildBar
+@onready var bottom_dock: Control = $BottomDock
 
 var _mode: VillageBuilding.BuildingType = VillageBuilding.BuildingType.GOLD_MINE
+var _wave_manager: Node3D = null
+var _next_wave_timer: float = 0.0
 
 
 func _style_top_bar() -> void:
@@ -24,6 +28,14 @@ func _style_top_bar() -> void:
 func _ready() -> void:
 	_style_top_bar()
 	_style_bottom_panel()
+	_style_toggle_button()
+	toggle_btn.pressed.connect(_on_toggle_build_bar)
+	GameState.wave_started.connect(_on_wave)
+	GameState.game_over.connect(_on_game_over)
+	GameState.resources_changed.connect(_refresh_resources)
+	
+	_wave_manager = get_tree().get_first_node_in_group("wave_manager")
+	_update_wave_display()
 	var v: VBoxContainer = $BottomDock/PanelContainer/MarginContainer/VBox
 	v.get_node("BuildGrid/BtnGoldMine").pressed.connect(_on_btn_gold_mine)
 	v.get_node("BuildGrid/BtnElixir").pressed.connect(_on_btn_elixir)
@@ -34,9 +46,6 @@ func _ready() -> void:
 	v.get_node("BuildGrid/BtnBarracks").pressed.connect(_on_btn_barracks)
 	v.get_node("BuildGrid/BtnTownHall").pressed.connect(_on_btn_town_hall)
 	v.get_node("BuildGrid/BtnTrain").pressed.connect(_on_btn_train)
-	GameState.resources_changed.connect(_refresh_resources)
-	GameState.wave_started.connect(_on_wave)
-	GameState.game_over.connect(_on_game_over)
 	_refresh_resources()
 	_set_mode(VillageBuilding.BuildingType.GOLD_MINE)
 	overlay.visible = false
@@ -66,13 +75,45 @@ func _style_bottom_panel() -> void:
 			b.add_theme_color_override("font_color", Color(0.98, 0.94, 0.86))
 
 
+func _style_toggle_button() -> void:
+	var btn_flat := StyleBoxFlat.new()
+	btn_flat.bg_color = Color(0.38, 0.28, 0.16, 1.0)
+	btn_flat.border_color = Color(0.75, 0.58, 0.22, 1.0)
+	btn_flat.set_border_width_all(2)
+	btn_flat.set_corner_radius_all(6)
+	toggle_btn.add_theme_stylebox_override("normal", btn_flat)
+	toggle_btn.add_theme_color_override("font_color", Color(0.98, 0.94, 0.86))
+	toggle_btn.add_theme_font_size_override("font_size", 14)
+
+
 func _refresh_resources() -> void:
 	gold_label.text = "%d / %d" % [GameState.gold, GameState.gold_max]
 	elixir_label.text = "%d / %d" % [GameState.elixir, GameState.elixir_max]
 
 
+func _process(delta: float) -> void:
+	if not GameState.is_paused:
+		_update_wave_display()
+
+
+func _update_wave_display() -> void:
+	var enemies: int = GameState.enemies_alive
+	if enemies <= 0:
+		if _wave_manager and _wave_manager.has_method("get_time_to_next"):
+			var time_to_next: float = _wave_manager.call("get_time_to_next")
+			if time_to_next > 0:
+				var sec: int = int(ceil(time_to_next))
+				wave_label.text = "Prochaine vague : %ds" % sec
+			else:
+				wave_label.text = "Vague complétée"
+		else:
+			wave_label.text = "Vague complétée"
+	else:
+		wave_label.text = "Zombies : %d" % enemies
+
+
 func _on_wave(idx: int) -> void:
-	wave_label.text = "Horde %d" % idx
+	wave_label.text = "Horde %d - Zombies : %d" % [idx, GameState.enemies_alive]
 
 
 func _on_game_over() -> void:
@@ -167,3 +208,7 @@ func _on_btn_train() -> void:
 	u.move_speed = 5.0
 	allies.add_child(u)
 	u.global_position = barracks.global_position + Vector3(2.2, 0.0, 0.5)
+
+
+func _on_toggle_build_bar() -> void:
+	bottom_dock.visible = not bottom_dock.visible

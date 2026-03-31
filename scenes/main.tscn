@@ -47,7 +47,7 @@ glow_blend_mode = 1
 environment = SubResource("Environment_1")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.884, -0.242, 0.4, 0, 0.857, 0.515, -0.467, -0.455, 0.757, 22, 36, 18)
+
 light_color = Color(1, 0.95, 0.85, 1)
 light_energy = 1.28
 shadow_enabled = true
@@ -169,6 +169,15 @@ theme_override_colors/font_outline_color = Color(0.12, 0.04, 0.2, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 22
 text = "0 / 0"
+
+[node name="SpacerEnd" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ToggleBuildBar" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 40)
+text = "Menu"
 
 [node name="BottomDock" type="Control" parent="UI/HUD"]
 layout_mode = 1
@@ -294,3 +303,11 @@ theme_override_colors/font_outline_color = Color(0.2, 0.05, 0.02, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
 text = "Défaite"
+
+extends Node
+
+func _ready():
+    $Button.connect("pressed", self, "_on_Build_Bar_pressed")
+
+func _on_Build_Bar_pressed():
+    get_tree().change_scene_to_file("res://BuildBar.tscn")
