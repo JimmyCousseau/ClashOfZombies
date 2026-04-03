@@ -233,8 +233,10 @@ func _on_btn_train() -> void:
 	u.hp = 100
 	u.max_hp = 100
 	u.move_speed = 5.0
+	var offset: Vector3 = Vector3(randf_range(-2.0, 2.0), 0, randf_range(-2.0, 2.0))
+	u.global_position = barracks.global_position + offset
 	allies.add_child(u)
-	u.global_position = barracks.global_position + Vector3(2.2, 0.0, 0.5)
+	_set_mode(VillageBuilding.BuildingType.GOLD_MINE)
 
 
 func _on_toggle_build_bar() -> void:
