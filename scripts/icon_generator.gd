@@ -1,3 +1,4 @@
+class_name IconGenerator
 extends Node
 ## Génère des icônes simples pour les boutons
 
