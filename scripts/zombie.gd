@@ -58,6 +58,11 @@ func _move_to_target(delta: float, target_pos: Vector3) -> void:
 
 
 func _attack_building(delta: float) -> void:
+	var dist: float = global_position.distance_to(_target_building.global_position)
+	if dist > attack_range + 0.5:
+		_move_to_target(delta, _target_building.global_position)
+		return
+	
 	velocity = Vector3.ZERO
 	move_and_slide()
 	global_position.y = 0.0
@@ -91,77 +96,107 @@ func _check_zombie_target() -> void:
 
 
 func _build_zombie_visual() -> void:
-	mesh_root.position = Vector3.ZERO
-	
-	# Zombie body - taller and more menacing
-	var mat_zombie := _mat(Color(0.32, 0.54, 0.29, 1.0), 0.8, 0.05)
-	var body_box := BoxMesh.new()
-	body_box.size = Vector3(0.8, 1.6, 0.6)
-	var body := MeshInstance3D.new()
-	body.mesh = body_box
-	body.material_override = mat_zombie
-	body.position = Vector3(0.0, 0.8, 0.0)
-	mesh_root.add_child(body)
-	
-	# Zombie head - with skin tone
-	var head_box := BoxMesh.new()
-	head_box.size = Vector3(0.5, 0.5, 0.5)
+	for c in mesh_root.get_children():
+		c.free()
+	mesh_root.position = Vector3(0, 0, 0)
+	mesh_root.rotation = Vector3.ZERO
+	## Style proche des zombies CoC : peau verte, haillons violets, bras tendus, yeux qui brillent.
+	var skin := Color(0.42, 0.58, 0.38)
+	var skin_dark := Color(0.28, 0.4, 0.26)
+	var rags := Color(0.42, 0.22, 0.62)
+	var rags_dark := Color(0.22, 0.1, 0.32)
+	var bone := Color(0.75, 0.7, 0.62)
+	# Torse voûté
+	var torso := MeshInstance3D.new()
+	var tbox := BoxMesh.new()
+	tbox.size = Vector3(0.46, 0.5, 0.34)
+	torso.mesh = tbox
+	torso.material_override = _mat(rags)
+	torso.position = Vector3(0, 0.38, 0)
+	torso.rotation_degrees = Vector3(12, 0, 0)
+	mesh_root.add_child(torso)
+	# Haillons / lambeaux
+	var rag1 := MeshInstance3D.new()
+	var r1 := BoxMesh.new()
+	r1.size = Vector3(0.25, 0.35, 0.08)
+	rag1.mesh = r1
+	rag1.material_override = _mat(rags_dark)
+	rag1.position = Vector3(0.18, 0.22, 0.14)
+	rag1.rotation_degrees = Vector3(0, 0, -18)
+	mesh_root.add_child(rag1)
+	var rag2 := MeshInstance3D.new()
+	var r2 := BoxMesh.new()
+	r2.size = r1.size
+	rag2.mesh = r2
+	rag2.material_override = _mat(rags)
+	rag2.position = Vector3(-0.2, 0.28, -0.12)
+	rag2.rotation_degrees = Vector3(8, 0, 22)
+	mesh_root.add_child(rag2)
+	# Tête gonflée style cartoon
 	var head := MeshInstance3D.new()
-	head.mesh = head_box
-	head.material_override = _mat(Color(0.55, 0.45, 0.38, 1.0), 0.85, 0.02)
-	head.position = Vector3(0.0, 1.65, 0.0)
+	var sp := SphereMesh.new()
+	sp.radius = 0.26
+	sp.height = 0.52
+	head.mesh = sp
+	head.material_override = _mat(skin)
+	head.position = Vector3(0, 0.88, 0.05)
 	mesh_root.add_child(head)
-	
-	# Zombie left arm
-	var arm_left := BoxMesh.new()
-	arm_left.size = Vector3(0.3, 0.8, 0.3)
-	var armL := MeshInstance3D.new()
-	armL.mesh = arm_left
-	armL.material_override = mat_zombie
-	armL.position = Vector3(-0.62, 0.95, 0.0)
-	armL.rotation_degrees = Vector3(5, 0, -8)
-	mesh_root.add_child(armL)
-	
-	# Zombie right arm
-	var armR := MeshInstance3D.new()
-	var arm_right := BoxMesh.new()
-	arm_right.size = Vector3(0.3, 0.8, 0.3)
-	armR.mesh = arm_right
-	armR.material_override = mat_zombie
-	armR.position = Vector3(0.62, 0.95, 0.0)
-	armR.rotation_degrees = Vector3(-5, 0, 8)
-	mesh_root.add_child(armR)
-	
-	# Zombie left leg
-	var leg_left := BoxMesh.new()
-	leg_left.size = Vector3(0.35, 0.85, 0.35)
-	var legL := MeshInstance3D.new()
-	legL.mesh = leg_left
-	legL.material_override = mat_zombie
-	legL.position = Vector3(-0.3, 0.25, 0.0)
-	mesh_root.add_child(legL)
-	
-	# Zombie right leg
-	var legR := MeshInstance3D.new()
-	var leg_right := BoxMesh.new()
-	leg_right.size = Vector3(0.35, 0.85, 0.35)
-	legR.mesh = leg_right
-	legR.material_override = mat_zombie
-	legR.position = Vector3(0.3, 0.25, 0.0)
-	mesh_root.add_child(legR)
-	
-	# Zombie claws left
+	# Mâchoire / joue
+	var jaw := MeshInstance3D.new()
+	var jbox := BoxMesh.new()
+	jbox.size = Vector3(0.32, 0.12, 0.22)
+	jaw.mesh = jbox
+	jaw.material_override = _mat(skin_dark)
+	jaw.position = Vector3(0, 0.72, 0.18)
+	mesh_root.add_child(jaw)
+	# Yeux brillants (élexir)
+	var eye_l := MeshInstance3D.new()
+	var es := SphereMesh.new()
+	es.radius = 0.06
+	es.height = 0.12
+	eye_l.mesh = es
+	var em := StandardMaterial3D.new()
+	em.albedo_color = Color(0.55, 0.95, 0.85)
+	em.emission_enabled = true
+	em.emission = Color(0.35, 0.85, 0.75)
+	em.emission_energy_multiplier = 1.8
+	eye_l.material_override = em
+	eye_l.position = Vector3(-0.1, 0.92, 0.22)
+	mesh_root.add_child(eye_l)
+	var eye_r := MeshInstance3D.new()
+	var es2 := SphereMesh.new()
+	es2.radius = es.radius
+	es2.height = es.height
+	eye_r.mesh = es2
+	eye_r.material_override = em
+	eye_r.position = Vector3(0.1, 0.92, 0.22)
+	mesh_root.add_child(eye_r)
+	# Bras tendus (style zombie)
+	var arm_l := MeshInstance3D.new()
+	var abox := BoxMesh.new()
+	abox.size = Vector3(0.14, 0.14, 0.52)
+	arm_l.mesh = abox
+	arm_l.material_override = _mat(skin_dark)
+	arm_l.position = Vector3(-0.38, 0.52, 0.35)
+	arm_l.rotation_degrees = Vector3(-55, 0, -12)
+	mesh_root.add_child(arm_l)
+	var arm_r := MeshInstance3D.new()
+	var abox2 := BoxMesh.new()
+	abox2.size = abox.size
+	arm_r.mesh = abox2
+	arm_r.material_override = _mat(skin)
+	arm_r.position = Vector3(0.4, 0.5, 0.32)
+	arm_r.rotation_degrees = Vector3(-52, 0, 10)
+	mesh_root.add_child(arm_r)
+	# Mains / griffes
+	var claw := MeshInstance3D.new()
 	var cbox := BoxMesh.new()
-	cbox.size = Vector3(0.12, 0.3, 0.05)
-	var claw1 := MeshInstance3D.new()
-	var bone := Color(0.65, 0.59, 0.5, 1.0)
-	claw1.mesh = cbox
-	claw1.material_override = _mat(bone)
-	claw1.position = Vector3(-0.54, 0.46, -0.56)
-	claw1.rotation_degrees = Vector3(8, 0, -18)
-	mesh_root.add_child(claw1)
-	
-	# Zombie claws right
+	cbox.size = Vector3(0.18, 0.08, 0.12)
+	claw.mesh = cbox
+	claw.material_override = _mat(bone)
+	claw.position = Vector3(-0.52, 0.48, 0.58)
+	claw.rotation_degrees = Vector3(10, 0, -20)
+	mesh_root.add_child(claw)
 	var claw2 := MeshInstance3D.new()
 	var cbox2 := BoxMesh.new()
 	cbox2.size = cbox.size

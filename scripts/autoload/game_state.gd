@@ -129,8 +129,3 @@ func register_enemy() -> void:
 
 func unregister_enemy() -> void:
 	enemies_alive = maxi(0, enemies_alive - 1)
-
-
-func get_door_forward() -> Vector3:
-	# Door is on the south wall, forward direction points outward (negative Z)
-	return Vector3.FORWARD

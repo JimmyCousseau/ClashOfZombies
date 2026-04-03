@@ -23,6 +23,7 @@ var hp: int = 200
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 var cannon_barrel: MeshInstance3D = null
+var _barracks_training_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -35,6 +36,11 @@ func _ready() -> void:
 		label_3d.modulate = Color(1, 0.95, 0.85)
 		label_3d.outline_modulate = Color(0.1, 0.08, 0.05, 0.95)
 		label_3d.pixel_size = 0.012
+	
+	if building_type == BuildingType.BARRACKS:
+		_barracks_training_timer = 0.0
+		set_physics_process(true)
+		_spawn_first_barbarian()
 
 
 func _default_hp() -> int:
@@ -338,3 +344,30 @@ func _destroyed() -> void:
 		_:
 			pass
 	queue_free()
+
+
+func _physics_process(delta: float) -> void:
+	if building_type != BuildingType.BARRACKS:
+		return
+	_barracks_training_timer -= delta
+	if _barracks_training_timer <= 0.0:
+		_barracks_training_timer = 60.0
+		_spawn_barbarian()
+
+
+func _spawn_first_barbarian() -> void:
+	_spawn_barbarian()
+
+
+func _spawn_barbarian() -> void:
+	var allies: Node3D = get_tree().get_first_node_in_group("ally_units")
+	if allies == null:
+		return
+	var u: Barbarian = preload("res://scenes/barbarian.tscn").instantiate()
+	u.allegiance = Unit.Allegiance.PLAYER
+	u.hp = 100
+	u.max_hp = 100
+	u.move_speed = 5.0
+	var offset: Vector3 = Vector3(randf_range(-2.0, 2.0), 0, randf_range(-2.0, 2.0))
+	u.global_position = global_position + offset
+	allies.add_child(u)

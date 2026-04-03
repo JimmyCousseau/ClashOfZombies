@@ -45,7 +45,6 @@ func _spawn_wave() -> void:
 	GameState.wave_started.emit(_wave)
 	var n: int = base_count + _wave
 	var door_pos: Vector3 = GameState.get_door_position()
-	var door_forward: Vector3 = GameState.get_door_forward()
 	for i in n:
 		var u: Zombie = ZOMBIE_SCENE.instantiate()
 		u.allegiance = Unit.Allegiance.ENEMY
@@ -56,7 +55,7 @@ func _spawn_wave() -> void:
 		var spread_dist: float = randf_range(-3.0, 3.0)
 		var forward_dist: float = randf_range(-8.0, -5.0)
 		var offset: Vector3 = Vector3(spread_dist, 0.0, forward_dist)
-		u.global_position = door_pos + offset
+		u.global_position = door_pos - offset
 		u.setup_zombie_patrol()
 
 

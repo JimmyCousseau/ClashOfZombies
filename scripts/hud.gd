@@ -16,7 +16,6 @@ var _mode: VillageBuilding.BuildingType = VillageBuilding.BuildingType.GOLD_MINE
 var _wave_manager: Node3D = null
 var _next_wave_timer: float = 0.0
 
-
 func _style_top_bar() -> void:
 	var s := StyleBoxFlat.new()
 	s.bg_color = Color(0.06, 0.05, 0.04, 0.62)
@@ -35,6 +34,7 @@ func _ready() -> void:
 	GameState.wave_started.connect(_on_wave)
 	GameState.game_over.connect(_on_game_over)
 	GameState.resources_changed.connect(_refresh_resources)
+
 	
 	_wave_manager = get_tree().get_first_node_in_group("wave_manager")
 	_update_wave_display()
@@ -51,6 +51,7 @@ func _ready() -> void:
 	_refresh_resources()
 	_set_mode(VillageBuilding.BuildingType.GOLD_MINE)
 	overlay.visible = false
+	bottom_dock.visible = false
 
 
 func _style_bottom_panel() -> void:
