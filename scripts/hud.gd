@@ -203,7 +203,7 @@ func _on_btn_train() -> void:
 	var allies: Node3D = get_tree().get_first_node_in_group("ally_units") as Node3D
 	if allies == null:
 		return
-	var u: Unit = preload("res://scenes/unit.tscn").instantiate()
+	var u: Barbarian = preload("res://scenes/barbarian.tscn").instantiate()
 	u.allegiance = Unit.Allegiance.PLAYER
 	u.hp = 100
 	u.max_hp = 100

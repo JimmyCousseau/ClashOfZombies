@@ -1,7 +1,7 @@
 extends Node3D
 ## Vagues de zombies : patrouille hors du village (sans attaque).
 
-const UNIT_SCENE := preload("res://scenes/unit.tscn")
+const ZOMBIE_SCENE := preload("res://scenes/zombie.tscn")
 
 @export var interval_sec: float = 14.0
 @export var base_count: int = 2
@@ -45,15 +45,18 @@ func _spawn_wave() -> void:
 	GameState.wave_started.emit(_wave)
 	var n: int = base_count + _wave
 	var door_pos: Vector3 = GameState.get_door_position()
+	var door_forward: Vector3 = GameState.get_door_forward()
 	for i in n:
-		var u: Unit = UNIT_SCENE.instantiate()
+		var u: Zombie = ZOMBIE_SCENE.instantiate()
 		u.allegiance = Unit.Allegiance.ENEMY
 		u.hp = 55 + _wave * 5
 		u.max_hp = u.hp
 		add_child(u)
-		var offset_angle: float = randf() * TAU
-		var offset_dist: float = 5.0 + randf() * 3.0
-		var offset: Vector3 = Vector3(cos(offset_angle) * offset_dist, 0, sin(offset_angle) * offset_dist)
+		# Spawn in front of door with some spread perpendicular to forward direction
+		var right: Vector3 = door_forward.cross(Vector3.UP).normalized()
+		var spread_dist: float = randf_range(-3.0, 3.0)
+		var forward_dist: float = randf_range(5.0, 8.0)
+		var offset: Vector3 = right * spread_dist + door_forward * forward_dist
 		u.global_position = door_pos + offset
 		u.setup_zombie_patrol()
 
