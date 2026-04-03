@@ -1,23 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://c8mainscene01"]
+[gd_scene format=3 uid="uid://c8mainscene01"]
 
-[ext_resource type="Script" path="res://scripts/camera_rig.gd" id="1_cam"]
-[ext_resource type="Script" path="res://scripts/village.gd" id="2_vil"]
-[ext_resource type="Script" path="res://scripts/wave_manager.gd" id="3_wave"]
-[ext_resource type="Script" path="res://scripts/hud.gd" id="4_hud"]
-[ext_resource type="Script" path="res://scripts/world_decor.gd" id="5_decor"]
-[ext_resource type="Script" path="res://scripts/wall_ring.gd" id="6_wall"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
-size = Vector3(92, 0.28, 92)
-
-[sub_resource type="StandardMaterial3D" id="Mat_ground"]
-albedo_color = Color(0.38, 0.66, 0.3, 1)
-roughness = 0.95
-specular_mode = 1
-
-[sub_resource type="BoxMesh" id="BoxMesh_ground"]
-material = SubResource("Mat_ground")
-size = Vector3(92, 0.28, 92)
+[ext_resource type="Script" uid="uid://bqy3hn8yojs21" path="res://scripts/camera_rig.gd" id="1_cam"]
+[ext_resource type="Script" uid="uid://cnf6oafaid6jt" path="res://scripts/village.gd" id="2_vil"]
+[ext_resource type="Script" uid="uid://bcfawp03hh4pr" path="res://scripts/wave_manager.gd" id="3_wave"]
+[ext_resource type="Script" uid="uid://b85g5h4507k0q" path="res://scripts/hud.gd" id="4_hud"]
+[ext_resource type="Script" uid="uid://dmrld6xqo67wb" path="res://scripts/world_decor.gd" id="5_decor"]
+[ext_resource type="Script" uid="uid://3pyfpdojku7k" path="res://scripts/wall_ring.gd" id="6_wall"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.32, 0.52, 0.92, 1)
@@ -39,60 +27,67 @@ tonemap_white = 1.05
 glow_enabled = true
 glow_intensity = 0.32
 glow_strength = 0.85
-glow_blend_mode = 1
 
-[node name="Main" type="Node3D"]
+[sub_resource type="StandardMaterial3D" id="Mat_ground"]
+specular_mode = 1
+albedo_color = Color(0.38, 0.66, 0.3, 1)
+roughness = 0.95
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("Mat_ground")
+size = Vector3(92, 0.28, 92)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(92, 0.28, 92)
+
+[node name="Main" type="Node3D" unique_id=568709986]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1027494313]
 environment = SubResource("Environment_1")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1550556856]
 light_color = Color(1, 0.95, 0.85, 1)
 light_energy = 1.28
 shadow_enabled = true
 directional_shadow_mode = 1
 
-[node name="Ground" type="StaticBody3D" parent="."]
+[node name="Ground" type="StaticBody3D" parent="." unique_id=1024004414]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0)
-collision_layer = 1
-collision_mask = 1
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=707369142]
 mesh = SubResource("BoxMesh_ground")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1245007828]
 shape = SubResource("BoxShape3D_ground")
 
-[node name="WorldDecor" type="Node3D" parent="."]
+[node name="WorldDecor" type="Node3D" parent="." unique_id=231734381]
 script = ExtResource("5_decor")
 
-[node name="WallRing" type="Node3D" parent="."]
+[node name="WallRing" type="Node3D" parent="." unique_id=349789860]
 script = ExtResource("6_wall")
 
-[node name="CameraRig" type="Node3D" parent="."]
+[node name="CameraRig" type="Node3D" parent="." unique_id=1926364144]
 script = ExtResource("1_cam")
 
-[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=642544532]
 fov = 40.0
 near = 0.08
 far = 450.0
 
-[node name="Village" type="Node3D" parent="." groups=["village"]]
+[node name="Village" type="Node3D" parent="." unique_id=64260844 groups=["village"]]
 script = ExtResource("2_vil")
 
-[node name="ProductionTimer" type="Timer" parent="Village"]
-wait_time = 1.0
+[node name="ProductionTimer" type="Timer" parent="Village" unique_id=999896694]
 autostart = true
 
-[node name="WaveManager" type="Node3D" parent="."]
+[node name="WaveManager" type="Node3D" parent="." unique_id=423612599]
 script = ExtResource("3_wave")
 
-[node name="AllyUnits" type="Node3D" parent="." groups=["ally_units"]]
+[node name="AllyUnits" type="Node3D" parent="." unique_id=1348023095 groups=["ally_units"]]
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1236862955]
 
-[node name="HUD" type="Control" parent="UI"]
+[node name="HUD" type="Control" parent="UI" unique_id=16495880]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -102,34 +97,34 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("4_hud")
 
-[node name="TopBar" type="PanelContainer" parent="UI/HUD"]
+[node name="TopBar" type="PanelContainer" parent="UI/HUD" unique_id=961711168]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 64.0
-mouse_filter = 0
+grow_horizontal = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/TopBar"]
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/TopBar" unique_id=2089634751]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer" unique_id=1545339509]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="GoldBlock" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+[node name="GoldBlock" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=1503409404]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="GoldIcon" type="ColorRect" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/GoldBlock"]
+[node name="GoldIcon" type="ColorRect" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/GoldBlock" unique_id=1062308712]
 custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 color = Color(0.95, 0.78, 0.15, 1)
 
-[node name="GoldLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/GoldBlock"]
+[node name="GoldLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/GoldBlock" unique_id=1208257867]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.92, 0.55, 1)
 theme_override_colors/font_outline_color = Color(0.15, 0.1, 0.02, 1)
@@ -137,11 +132,11 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 22
 text = "0 / 0"
 
-[node name="SpacerL" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+[node name="SpacerL" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=88818617]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="WaveLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+[node name="WaveLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=603985561]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 1, 1)
 theme_override_colors/font_outline_color = Color(0.05, 0.05, 0.12, 1)
@@ -149,20 +144,20 @@ theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 20
 text = "Horde —"
 
-[node name="SpacerR" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+[node name="SpacerR" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=347433422]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ElixirBlock" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+[node name="ElixirBlock" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=1317040481]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ElixirIcon" type="ColorRect" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/ElixirBlock"]
+[node name="ElixirIcon" type="ColorRect" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/ElixirBlock" unique_id=818955153]
 custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 color = Color(0.62, 0.28, 0.95, 1)
 
-[node name="ElixirLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/ElixirBlock"]
+[node name="ElixirLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/ElixirBlock" unique_id=476665428]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.65, 1, 1)
 theme_override_colors/font_outline_color = Color(0.12, 0.04, 0.2, 1)
@@ -170,121 +165,113 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 22
 text = "0 / 0"
 
-[node name="SpacerEnd" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
+[node name="SpacerEnd" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=698318921]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ToggleBuildBar" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer"]
-layout_mode = 2
+[node name="ToggleBuildBar" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=129711866]
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 text = "Menu"
 
-[node name="BottomDock" type="Control" parent="UI/HUD"]
+[node name="BottomDock" type="Control" parent="UI/HUD" unique_id=1055675769]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = -300.0
+offset_top = -232.0
 offset_right = -10.0
-offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="UI/HUD/BottomDock"]
+[node name="PanelContainer" type="PanelContainer" parent="UI/HUD/BottomDock" unique_id=88976082]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/BottomDock/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/BottomDock/PanelContainer" unique_id=1857691657]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="VBox" type="VBoxContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer"]
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer" unique_id=1620675838]
+clip_contents = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ModeLabel" type="Label" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
+[node name="ModeLabel" type="Label" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=986092969]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.98, 0.94, 0.88, 1)
 theme_override_font_sizes/font_size = 17
 text = "Construction"
 
-[node name="BuildGrid" type="GridContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
+[node name="BuildGrid" type="GridContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=80334007]
 layout_mode = 2
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 3
 
-[node name="BtnGoldMine" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnGoldMine" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1545767895]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Mine (150 or)"
 
-[node name="BtnElixir" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnElixir" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=248332924]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Élexir (150 él.)"
 
-[node name="BtnFarm" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnFarm" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1611397541]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Ferme (or+él.)"
 
-[node name="BtnGoldStorage" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnGoldStorage" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1581339738]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Entrepôt or"
 
-[node name="BtnElixirStorage" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnElixirStorage" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=435826558]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Réservoir él."
 
-[node name="BtnCannon" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnCannon" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1076711097]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Canon"
 
-[node name="BtnBarracks" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnBarracks" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1777853122]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Caserne"
 
-[node name="BtnTownHall" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnTownHall" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=373181132]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "HDV (500 él.)"
 
-[node name="BtnTrain" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid"]
+[node name="BtnTrain" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=131861853]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Barbare (50 él.)"
 
-[node name="HSeparator" type="HSeparator" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
+[node name="HSeparator" type="HSeparator" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=224278821]
 layout_mode = 2
 
-[node name="BtnRepairAll" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
+[node name="BtnRepairAll" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=1554195644]
 layout_mode = 2
 text = "Réparer tout"
 
-[node name="Hint" type="Label" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.72, 0.65, 1)
-theme_override_font_sizes/font_size = 13
-text = "Mines / ferme / stocks produisent des ressources. Clic : placer • Clic droit : vue"
-autowrap_mode = 2
-
-[node name="GameOverOverlay" type="ColorRect" parent="UI/HUD"]
+[node name="GameOverOverlay" type="ColorRect" parent="UI/HUD" unique_id=1502420083]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -293,9 +280,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.04, 0.03, 0.06, 0.85)
-mouse_filter = 0
 
-[node name="Center" type="CenterContainer" parent="UI/HUD/GameOverOverlay"]
+[node name="Center" type="CenterContainer" parent="UI/HUD/GameOverOverlay" unique_id=1397243748]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -303,18 +289,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="UI/HUD/GameOverOverlay/Center"]
+[node name="Label" type="Label" parent="UI/HUD/GameOverOverlay/Center" unique_id=1729625176]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0.2, 0.05, 0.02, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
 text = "Défaite"
-
-extends Node
-
-func _ready():
-    $Button.connect("pressed", self, "_on_Build_Bar_pressed")
-
-func _on_Build_Bar_pressed():
-    get_tree().change_scene_to_file("res://BuildBar.tscn")

@@ -48,6 +48,7 @@ func _ready() -> void:
 	v.get_node("BuildGrid/BtnBarracks").pressed.connect(_on_btn_barracks)
 	v.get_node("BuildGrid/BtnTownHall").pressed.connect(_on_btn_town_hall)
 	v.get_node("BuildGrid/BtnTrain").pressed.connect(_on_btn_train)
+	_apply_button_icons()
 	_refresh_resources()
 	_set_mode(VillageBuilding.BuildingType.GOLD_MINE)
 	overlay.visible = false
@@ -87,6 +88,29 @@ func _style_toggle_button() -> void:
 	toggle_btn.add_theme_stylebox_override("normal", btn_flat)
 	toggle_btn.add_theme_color_override("font_color", Color(0.98, 0.94, 0.86))
 	toggle_btn.add_theme_font_size_override("font_size", 14)
+
+
+func _apply_button_icons() -> void:
+	var v: VBoxContainer = $BottomDock/PanelContainer/MarginContainer/VBox
+	var grid: GridContainer = v.get_node("BuildGrid")
+	
+	var buttons: Dictionary = {
+		"BtnGoldMine": IconGenerator.create_gold_icon(),
+		"BtnElixir": IconGenerator.create_elixir_icon(),
+		"BtnFarm": IconGenerator.create_farm_icon(),
+		"BtnGoldStorage": IconGenerator.create_storage_icon(),
+		"BtnElixirStorage": IconGenerator.create_storage_icon(),
+		"BtnCannon": IconGenerator.create_cannon_icon(),
+		"BtnBarracks": IconGenerator.create_barracks_icon(),
+		"BtnTownHall": IconGenerator.create_town_hall_icon(),
+		"BtnTrain": IconGenerator.create_barbarian_icon(),
+	}
+	
+	for btn_name: String in buttons:
+		var btn: Button = grid.get_node(btn_name)
+		btn.icon = buttons[btn_name]
+		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.expand_icon = true
 
 
 func _refresh_resources() -> void:
