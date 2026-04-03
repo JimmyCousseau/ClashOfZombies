@@ -52,11 +52,10 @@ func _spawn_wave() -> void:
 		u.hp = 55 + _wave * 5
 		u.max_hp = u.hp
 		add_child(u)
-		# Spawn in front of door with some spread perpendicular to forward direction
-		var right: Vector3 = door_forward.cross(Vector3.UP).normalized()
+		# Spawn outside the door (negative Z direction, away from village)
 		var spread_dist: float = randf_range(-3.0, 3.0)
-		var forward_dist: float = randf_range(5.0, 8.0)
-		var offset: Vector3 = right * spread_dist + door_forward * forward_dist
+		var forward_dist: float = randf_range(-8.0, -5.0)
+		var offset: Vector3 = Vector3(spread_dist, 0.0, forward_dist)
 		u.global_position = door_pos + offset
 		u.setup_zombie_patrol()
 

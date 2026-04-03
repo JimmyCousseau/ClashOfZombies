@@ -5,7 +5,7 @@ enum Allegiance { PLAYER, ENEMY }
 
 @export var allegiance: Allegiance = Allegiance.ENEMY
 @export var move_speed: float = 4.5
-@export var attack_range: float = 2.2
+@export var attack_range: float = 0.8
 @export var attack_damage: int = 18
 @export var attack_cooldown: float = 0.85
 

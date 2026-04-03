@@ -68,23 +68,7 @@ func _attack_building(delta: float) -> void:
 
 
 func _check_zombie_target() -> void:
-	# Priority 1: Door
-	var door_pos: Vector3 = GameState.get_door_position()
-	var door_dist: float = global_position.distance_to(door_pos)
-	const DOOR_DETECTION_RANGE: float = 18.0
-	
-	if door_dist < DOOR_DETECTION_RANGE:
-		var door = get_tree().root.get_child(0)
-		if door:
-			for child in door.get_children():
-				if child is VillageBuilding and child.building_type == VillageBuilding.BuildingType.DOOR:
-					_target_building = child
-					_target_enemy = null
-					return
-	
-	_target_building = null
-	
-	# Priority 2: Closest building
+	# Priority 1: Closest building (including door)
 	var village: Node3D = get_tree().get_first_node_in_group("village")
 	if village:
 		var closest: VillageBuilding = null
@@ -97,7 +81,7 @@ func _check_zombie_target() -> void:
 					closest = b
 					closest_dist = d
 		
-		if closest and closest_dist < 20.0:
+		if closest and closest_dist < 35.0:
 			_target_building = closest
 			_target_enemy = null
 			return
