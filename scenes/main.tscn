@@ -3,13 +3,13 @@
 [ext_resource type="Script" uid="uid://bqy3hn8yojs21" path="res://scripts/camera_rig.gd" id="1_cam"]
 [ext_resource type="Script" uid="uid://cnf6oafaid6jt" path="res://scripts/village.gd" id="2_vil"]
 [ext_resource type="Script" uid="uid://bcfawp03hh4pr" path="res://scripts/wave_manager.gd" id="3_wave"]
-[ext_resource type="Script" uid="uid://ui_hud_main" path="res://scripts/ui/hud_main.gd" id="4_hud"]
+[ext_resource type="Script" uid="uid://b7lxbroflqsuq" path="res://scripts/ui/hud_main.gd" id="4_hud"]
 [ext_resource type="Script" uid="uid://dmrld6xqo67wb" path="res://scripts/world_decor.gd" id="5_decor"]
 [ext_resource type="Script" uid="uid://3pyfpdojku7k" path="res://scripts/wall_ring.gd" id="6_wall"]
-[ext_resource type="Script" uid="uid://ui_resource" path="res://scripts/ui/resource_display.gd" id="7_resource"]
-[ext_resource type="Script" uid="uid://ui_wave" path="res://scripts/ui/wave_display.gd" id="8_wave"]
-[ext_resource type="Script" uid="uid://ui_buttons" path="res://scripts/ui/building_buttons.gd" id="9_buttons"]
-[ext_resource type="Script" uid="uid://ui_overlay" path="res://scripts/ui/game_overlay.gd" id="10_overlay"]
+[ext_resource type="Script" uid="uid://d1mbvfx7uhp8x" path="res://scripts/ui/resource_display.gd" id="7_resource"]
+[ext_resource type="Script" uid="uid://d301dbf0rw6lj" path="res://scripts/ui/wave_display.gd" id="8_wave"]
+[ext_resource type="Script" uid="uid://t8glklu3afw8" path="res://scripts/ui/building_buttons.gd" id="9_buttons"]
+[ext_resource type="Script" uid="uid://ddg5ecu8by0q4" path="res://scripts/ui/game_overlay.gd" id="10_overlay"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.32, 0.52, 0.92, 1)
@@ -275,6 +275,9 @@ layout_mode = 2
 layout_mode = 2
 text = "Réparer tout"
 
+[node name="BuildingButtons" type="Node" parent="UI/HUD/BottomDock/PanelContainer" unique_id=-961633963]
+script = ExtResource("9_buttons")
+
 [node name="GameOverOverlay" type="ColorRect" parent="UI/HUD" unique_id=1502420083]
 visible = false
 layout_mode = 1
@@ -304,11 +307,8 @@ text = "Défaite"
 [node name="ResourceDisplay" type="Node" parent="UI/HUD" unique_id=1111111111]
 script = ExtResource("7_resource")
 
-[node name="WaveDisplay" type="Node" parent="UI/HUD" unique_id=2222222222]
+[node name="WaveDisplay" type="Node" parent="UI/HUD" unique_id=-2072745074]
 script = ExtResource("8_wave")
 
-[node name="BuildingButtons" type="Node" parent="UI/HUD/BottomDock/PanelContainer" unique_id=3333333333]
-script = ExtResource("9_buttons")
-
-[node name="GameOverlay" type="Node" parent="UI/HUD" unique_id=4444444444]
+[node name="GameOverlay" type="Node" parent="UI/HUD" unique_id=149477148]
 script = ExtResource("10_overlay")

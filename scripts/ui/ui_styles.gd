@@ -1,3 +1,4 @@
+class_name UIStyles
 extends Node
 ## Gère les styles visuels de l'UI
 
