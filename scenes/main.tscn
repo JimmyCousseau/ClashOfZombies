@@ -3,9 +3,13 @@
 [ext_resource type="Script" uid="uid://bqy3hn8yojs21" path="res://scripts/camera_rig.gd" id="1_cam"]
 [ext_resource type="Script" uid="uid://cnf6oafaid6jt" path="res://scripts/village.gd" id="2_vil"]
 [ext_resource type="Script" uid="uid://bcfawp03hh4pr" path="res://scripts/wave_manager.gd" id="3_wave"]
-[ext_resource type="Script" uid="uid://b85g5h4507k0q" path="res://scripts/hud.gd" id="4_hud"]
+[ext_resource type="Script" uid="uid://ui_hud_main" path="res://scripts/ui/hud_main.gd" id="4_hud"]
 [ext_resource type="Script" uid="uid://dmrld6xqo67wb" path="res://scripts/world_decor.gd" id="5_decor"]
 [ext_resource type="Script" uid="uid://3pyfpdojku7k" path="res://scripts/wall_ring.gd" id="6_wall"]
+[ext_resource type="Script" uid="uid://ui_resource" path="res://scripts/ui/resource_display.gd" id="7_resource"]
+[ext_resource type="Script" uid="uid://ui_wave" path="res://scripts/ui/wave_display.gd" id="8_wave"]
+[ext_resource type="Script" uid="uid://ui_buttons" path="res://scripts/ui/building_buttons.gd" id="9_buttons"]
+[ext_resource type="Script" uid="uid://ui_overlay" path="res://scripts/ui/game_overlay.gd" id="10_overlay"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.32, 0.52, 0.92, 1)
@@ -296,3 +300,15 @@ theme_override_colors/font_outline_color = Color(0.2, 0.05, 0.02, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
 text = "Défaite"
+
+[node name="ResourceDisplay" type="Node" parent="UI/HUD" unique_id=1111111111]
+script = ExtResource("7_resource")
+
+[node name="WaveDisplay" type="Node" parent="UI/HUD" unique_id=2222222222]
+script = ExtResource("8_wave")
+
+[node name="BuildingButtons" type="Node" parent="UI/HUD/BottomDock/PanelContainer" unique_id=3333333333]
+script = ExtResource("9_buttons")
+
+[node name="GameOverlay" type="Node" parent="UI/HUD" unique_id=4444444444]
+script = ExtResource("10_overlay")
