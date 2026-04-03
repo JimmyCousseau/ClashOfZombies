@@ -1,7 +1,7 @@
 extends Node
 ## Gère l'affichage des vagues
 
-@onready var wave_label: Label = $"../../TopBar/MarginContainer/HBoxContainer/WaveLabel"
+@onready var wave_label: Label = $"../TopBar/MarginContainer/HBoxContainer/WaveLabel"
 
 var _wave_manager: Node3D = null
 

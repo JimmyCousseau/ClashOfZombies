@@ -1,8 +1,8 @@
 extends Node
 ## Gère l'affichage des ressources
 
-@onready var gold_label: Label = $"../../TopBar/MarginContainer/HBoxContainer/GoldBlock/GoldLabel"
-@onready var elixir_label: Label = $"../../TopBar/MarginContainer/HBoxContainer/ElixirBlock/ElixirLabel"
+@onready var gold_label: Label = $"../TopBar/MarginContainer/HBoxContainer/GoldBlock/GoldLabel"
+@onready var elixir_label: Label = $"../TopBar/MarginContainer/HBoxContainer/ElixirBlock/ElixirLabel"
 
 
 func _ready() -> void:
