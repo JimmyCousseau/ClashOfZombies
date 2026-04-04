@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://t8glklu3afw8" path="res://scripts/ui/building_buttons.gd" id="9_buttons"]
 [ext_resource type="Script" uid="uid://ddg5ecu8by0q4" path="res://scripts/ui/game_overlay.gd" id="10_overlay"]
 [ext_resource type="PackedScene" path="res://scenes/tree.tscn" id="11_tree"]
-[ext_resource type="PackedScene" path="res://scenes/rock.tscn" id="12_rock"]
+[ext_resource type="PackedScene" uid="uid://ctbexhtx63rwd" path="res://scenes/rock.tscn" id="12_rock"]
 [ext_resource type="PackedScene" path="res://scenes/wall_segment.tscn" id="13_wallseg"]
 [ext_resource type="PackedScene" uid="uid://c8building01" path="res://scenes/building.tscn" id="14_building"]
 
@@ -172,6 +172,7 @@ offset_bottom = 64.0
 grow_horizontal = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="UI/HUD/TopBar" unique_id=2089634751]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 8
@@ -183,6 +184,7 @@ layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="WaveLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=603985561]
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 1, 1)
 theme_override_colors/font_outline_color = Color(0.05, 0.05, 0.12, 1)

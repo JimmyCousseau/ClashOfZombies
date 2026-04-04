@@ -42,6 +42,9 @@ const BUILD_DESCRIPTIONS: Dictionary = {
 	VillageBuilding.BuildingType.FARM: "Produit de la nourriture a chaque cycle.",
 	VillageBuilding.BuildingType.DOOR: "Controle l'entree du village.",
 	VillageBuilding.BuildingType.PATH: "Relie les batiments et structure les allees.",
+	VillageBuilding.BuildingType.WORKSHOP: "Fabrique des boulets de canon.",
+	VillageBuilding.BuildingType.GUARD_TOWER: "Tour de surveillance qui tire des fleches.",
+	VillageBuilding.BuildingType.DEFENSIVE_WALL: "Mur defensif convertible en tour de garde.",
 }
 
 const BUILD_COST: Dictionary = {
@@ -55,6 +58,9 @@ const BUILD_COST: Dictionary = {
 	VillageBuilding.BuildingType.FARM: {"wood": 35, "stone": 15, "iron": 0},
 	VillageBuilding.BuildingType.DOOR: {"wood": 90, "stone": 45, "iron": 20},
 	VillageBuilding.BuildingType.PATH: {"wood": 6, "stone": 8, "iron": 0},
+	VillageBuilding.BuildingType.WORKSHOP: {"wood": 50, "stone": 30, "iron": 20},
+	VillageBuilding.BuildingType.GUARD_TOWER: {"wood": 60, "stone": 40, "iron": 25},
+	VillageBuilding.BuildingType.DEFENSIVE_WALL: {"wood": 30, "stone": 40, "iron": 0},
 }
 
 const REPAIR_COST_PER_HP: Dictionary = {
@@ -68,6 +74,9 @@ const REPAIR_COST_PER_HP: Dictionary = {
 	VillageBuilding.BuildingType.FARM: {"wood": 0.7},
 	VillageBuilding.BuildingType.DOOR: {"wood": 0.85, "iron": 0.2},
 	VillageBuilding.BuildingType.PATH: {"stone": 0.2},
+	VillageBuilding.BuildingType.WORKSHOP: {"wood": 0.5, "stone": 0.3, "iron": 0.15},
+	VillageBuilding.BuildingType.GUARD_TOWER: {"wood": 0.6, "stone": 0.4, "iron": 0.2},
+	VillageBuilding.BuildingType.DEFENSIVE_WALL: {"wood": 0.3, "stone": 0.4},
 }
 
 const PRODUCTION: Dictionary = {
@@ -77,6 +86,9 @@ const PRODUCTION: Dictionary = {
 }
 
 const TRAIN_BARBARIAN_COST := {"food": 35, "wood": 20}
+const BARBARIAN_RESURRECTION_RATIO: float = 0.2
+const CANNONBALL_CRAFT_COST := {"iron": 2}
+const ARROW_CRAFT_COST := {"wood": 2}
 const EXPLORATION_FOCUS_ORDER: PackedStringArray = ["wood", "stone", "iron", "food", "salvage"]
 
 var wood: int = 280
@@ -84,6 +96,8 @@ var stone: int = 220
 var iron: int = 90
 var food: int = 150
 var items: int = 0
+var cannonballs: int = 0
+var arrows: int = 0
 var special_items: Dictionary = {
 	"medicine": 0,
 	"parts": 0,
@@ -95,6 +109,10 @@ var wood_max: int = 1800
 var stone_max: int = 1800
 var iron_max: int = 1400
 var food_max: int = 1500
+var cannonballs_max: int = 300
+var arrows_max: int = 300
+
+var dead_barbarians: Dictionary = {} # barracks_id -> count
 
 var enemies_alive: int = 0
 var is_paused: bool = false
@@ -177,6 +195,10 @@ func get_resource_amount(resource_key: String) -> int:
 			return food
 		"items":
 			return items
+		"cannonballs":
+			return cannonballs
+		"arrows":
+			return arrows
 	return 0
 
 
@@ -192,6 +214,10 @@ func get_resource_max(resource_key: String) -> int:
 			return food_max
 		"items":
 			return 9999
+		"cannonballs":
+			return cannonballs_max
+		"arrows":
+			return arrows_max
 	return 0
 
 
@@ -490,6 +516,10 @@ func _get_default_resource_max(resource_key: String) -> int:
 			return 1400
 		"food":
 			return 1500
+		"cannonballs":
+			return 300
+		"arrows":
+			return 300
 		"items":
 			return 9999
 	return 0
@@ -505,6 +535,10 @@ func _set_resource_amount(resource_key: String, value: int) -> void:
 			iron = clampi(value, 0, iron_max)
 		"food":
 			food = clampi(value, 0, food_max)
+		"cannonballs":
+			cannonballs = clampi(value, 0, cannonballs_max)
+		"arrows":
+			arrows = clampi(value, 0, arrows_max)
 		"items":
 			items = maxi(0, value)
 
@@ -519,6 +553,10 @@ func _set_resource_max(resource_key: String, value: int) -> void:
 			iron_max = value
 		"food":
 			food_max = value
+		"cannonballs":
+			cannonballs_max = value
+		"arrows":
+			arrows_max = value
 
 
 func _format_exploration_report(focus: String, loot: Dictionary) -> String:
@@ -610,6 +648,36 @@ func _roll_special_items(total_count: int, focus: String) -> Dictionary:
 		rolled[key] = int(rolled.get(key, 0)) + 1
 		remaining -= 1
 	return rolled
+
+
+func register_dead_barbarian(barracks_id: int) -> void:
+	dead_barbarians[barracks_id] = int(dead_barbarians.get(barracks_id, 0)) + 1
+
+
+func get_dead_barbarian_count(barracks_id: int) -> int:
+	return int(dead_barbarians.get(barracks_id, 0))
+
+
+func can_resurrect_barbarian(barracks_id: int) -> bool:
+	return get_dead_barbarian_count(barracks_id) > 0
+
+
+func get_resurrection_cost(barracks_id: int) -> Dictionary:
+	var base_cost: Dictionary = TRAIN_BARBARIAN_COST.duplicate()
+	var result: Dictionary = {}
+	for key in base_cost.keys():
+		result[key] = int(ceil(float(base_cost[key]) * BARBARIAN_RESURRECTION_RATIO))
+	return result
+
+
+func resurrect_barbarian(barracks_id: int) -> bool:
+	if not can_resurrect_barbarian(barracks_id):
+		return false
+	var cost: Dictionary = get_resurrection_cost(barracks_id)
+	if not spend(cost):
+		return false
+	dead_barbarians[barracks_id] = int(dead_barbarians.get(barracks_id, 0)) - 1
+	return true
 
 
 func _get_navigation_grid() -> AStarGrid2D:

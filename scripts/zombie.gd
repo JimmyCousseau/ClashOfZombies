@@ -70,6 +70,10 @@ func _attack_building(delta: float) -> void:
 	
 	_stop_motion()
 	_clear_path()
+	
+	if _target_building.get_door_spike_damage_per_sec() > 0.0:
+		apply_continuous_damage(_target_building.get_door_spike_damage_per_sec(), delta)
+	
 	_attack_acc += delta
 	if _attack_acc >= attack_cooldown:
 		_attack_acc = 0.0

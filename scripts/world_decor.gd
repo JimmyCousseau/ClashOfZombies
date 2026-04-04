@@ -2,7 +2,7 @@ extends Node3D
 ## Arbres et rochers autour de la zone de jeu (ambiance type village CoC).
 
 @export var decor_seed: int = 0
-@export var village_clear_radius: float = 18.0
+@export var village_clear_radius: float = 20.0
 @export var clutter_outer_radius: float = 42.0
 @export var forest_inner_radius: float = 46.0
 @export var forest_outer_radius: float = 126.0

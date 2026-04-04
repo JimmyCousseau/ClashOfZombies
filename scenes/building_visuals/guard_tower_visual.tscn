@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_stone"]
+albedo_color = Color(0.5, 0.48, 0.45, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_wood"]
+albedo_color = Color(0.38, 0.28, 0.15, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_rope"]
+albedo_color = Color(0.55, 0.45, 0.25, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_dark"]
+albedo_color = Color(0.2, 0.18, 0.16, 1)
+
+[sub_resource type="BoxMesh" id="mesh_base"]
+material = SubResource("mat_stone")
+size = Vector3(1.6, 0.6, 1.6)
+
+[sub_resource type="BoxMesh" id="mesh_tower"]
+material = SubResource("mat_stone")
+size = Vector3(1.2, 1.4, 1.2)
+
+[sub_resource type="BoxMesh" id="mesh_platform"]
+material = SubResource("mat_wood")
+size = Vector3(1.4, 0.2, 1.4)
+
+[sub_resource type="CylinderMesh" id="mesh_turret"]
+material = SubResource("mat_dark")
+top_radius = 0.3
+bottom_radius = 0.35
+height = 0.4
+
+[node name="GuardTowerVisual" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_base")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+
+[node name="Tower" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_tower")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
+
+[node name="Platform" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_platform")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="Turret" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_turret")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)

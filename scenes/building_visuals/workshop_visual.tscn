@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_wood"]
+albedo_color = Color(0.45, 0.31, 0.18, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_iron"]
+albedo_color = Color(0.35, 0.35, 0.35, 1)
+roughness = 0.6
+metallic = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_accent"]
+albedo_color = Color(0.75, 0.6, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="mesh_body"]
+material = SubResource("mat_wood")
+size = Vector3(2.0, 1.2, 2.0)
+
+[sub_resource type="BoxMesh" id="mesh_roof"]
+material = SubResource("mat_iron")
+size = Vector3(2.4, 0.3, 2.4)
+
+[sub_resource type="BoxMesh" id="mesh_furnace"]
+material = SubResource("mat_accent")
+size = Vector3(0.8, 0.8, 0.8)
+
+[node name="WorkshopVisual" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_body")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_roof")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Furnace" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_furnace")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.9, -0.6)

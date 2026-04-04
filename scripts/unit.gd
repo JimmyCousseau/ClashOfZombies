@@ -15,6 +15,7 @@ var max_hp: int = 90
 var _target_enemy: Unit = null
 var _target_building: VillageBuilding = null
 var _attack_acc: float = 0.0
+var _spike_damage_acc: float = 0.0
 var _path: Array[Vector3] = []
 var _path_index: int = 0
 var _path_refresh_timer: float = 0.0
@@ -35,6 +36,14 @@ func take_damage(amount: int) -> void:
 	_update_health_bar()
 	if hp <= 0:
 		_on_death()
+
+
+func apply_continuous_damage(damage_per_sec: float, delta: float) -> void:
+	_spike_damage_acc += damage_per_sec * delta
+	var damage_int: int = int(_spike_damage_acc)
+	if damage_int > 0:
+		take_damage(damage_int)
+		_spike_damage_acc -= float(damage_int)
 
 
 func _create_health_bar() -> void:

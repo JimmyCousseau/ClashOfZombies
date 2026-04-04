@@ -79,11 +79,21 @@ func _patrol_outside(delta: float) -> void:
 		_is_moving = true
 		_move_to_world(delta, _wander_target, 0.15)
 		return
-	_stop_motion()
-	_is_moving = false
+	
 	_idle_wander_timer -= delta
 	if _idle_wander_timer <= 0.0:
-		_pick_wander_target()
+		var random_offset: Vector3 = Vector3(
+			randf_range(-patrol_radius, patrol_radius),
+			0.0,
+			randf_range(-patrol_radius, patrol_radius)
+		)
+		_wander_target = _guard_home + random_offset
+		_has_wander_target = true
+		_reset_idle_wander_timer()
+		return
+	
+	_stop_motion()
+	_is_moving = false
 
 
 func _pick_target() -> void:
@@ -102,16 +112,10 @@ func _reset_idle_wander_timer() -> void:
 	_idle_wander_timer = randf_range(idle_wander_min_sec, idle_wander_max_sec)
 
 
-func _pick_wander_target() -> void:
-	for i in 10:
-		var offset := Vector3(randf_range(-patrol_radius, patrol_radius), 0.0, randf_range(-patrol_radius, patrol_radius))
-		var candidate := _guard_home + offset
-		if GameState.is_inside_village(candidate):
-			candidate = GameState.get_outside_spawn_from_origin(candidate)
-		_wander_target = candidate
-		_has_wander_target = true
-		return
-	_reset_idle_wander_timer()
+func _on_death() -> void:
+	if source_barracks_id > 0:
+		GameState.register_dead_barbarian(source_barracks_id)
+	queue_free()
 
 
 func _build_barbarian_visual() -> void:

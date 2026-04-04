@@ -13,6 +13,9 @@ enum BuildingType {
 	FARM,
 	DOOR,
 	PATH,
+	WORKSHOP,
+	GUARD_TOWER,
+	DEFENSIVE_WALL,
 }
 
 const BARRACKS_MAX_SOLDIERS: int = 3
@@ -27,6 +30,9 @@ const BUILDING_VISUAL_SCENES: Dictionary = {
 	BuildingType.FARM: preload("res://scenes/building_visuals/farm_visual.tscn"),
 	BuildingType.DOOR: preload("res://scenes/building_visuals/door_visual.tscn"),
 	BuildingType.PATH: preload("res://scenes/building_visuals/path_visual.tscn"),
+	BuildingType.WORKSHOP: preload("res://scenes/building_visuals/workshop_visual.tscn"),
+	BuildingType.GUARD_TOWER: preload("res://scenes/building_visuals/guard_tower_visual.tscn"),
+	BuildingType.DEFENSIVE_WALL: preload("res://scenes/building_visuals/defensive_wall_visual.tscn"),
 }
 const BUILDING_VISUAL_TOP_Y: Dictionary = {
 	BuildingType.TOWN_HALL: 4.2,
@@ -39,6 +45,9 @@ const BUILDING_VISUAL_TOP_Y: Dictionary = {
 	BuildingType.FARM: 1.45,
 	BuildingType.DOOR: 1.1,
 	BuildingType.PATH: 0.12,
+	BuildingType.WORKSHOP: 1.8,
+	BuildingType.GUARD_TOWER: 2.5,
+	BuildingType.DEFENSIVE_WALL: 1.2,
 }
 
 @export var building_type: BuildingType = BuildingType.GOLD_MINE
@@ -48,6 +57,7 @@ var level: int = 1
 var max_hp: int = 200
 var hp: int = 200
 var is_destroyed: bool = false
+var is_spiked: bool = false
 
 @onready var mesh_root: Node3D = $MeshRoot
 @onready var visual_container: Node3D = $MeshRoot/VisualContainer
@@ -83,6 +93,12 @@ func _default_hp() -> int:
 			return 600
 		BuildingType.PATH:
 			return 70
+		BuildingType.WORKSHOP:
+			return 280
+		BuildingType.GUARD_TOWER:
+			return 350
+		BuildingType.DEFENSIVE_WALL:
+			return 250
 		_:
 			return 250
 
@@ -98,6 +114,10 @@ func get_max_level() -> int:
 		BuildingType.DOOR:
 			return 1
 		BuildingType.PATH:
+			return 1
+		BuildingType.WORKSHOP, BuildingType.GUARD_TOWER:
+			return 2
+		BuildingType.DEFENSIVE_WALL:
 			return 1
 	return 1
 
@@ -155,6 +175,12 @@ func _type_name() -> String:
 			return "Porte"
 		BuildingType.PATH:
 			return "Chemin"
+		BuildingType.WORKSHOP:
+			return "Atelier"
+		BuildingType.GUARD_TOWER:
+			return "Tour"
+		BuildingType.DEFENSIVE_WALL:
+			return "Mur"
 	return "?"
 
 
@@ -737,7 +763,7 @@ func _spawn_barracks_soldiers(count: int) -> void:
 	var allies: Node3D = get_tree().get_first_node_in_group("ally_units")
 	if allies == null:
 		return
-	var spawn_center: Vector3 = GameState.get_outside_spawn_from_origin(global_position)
+	var spawn_center: Vector3 = global_position
 	for i in count:
 		var u: Barbarian = preload("res://scenes/barbarian.tscn").instantiate()
 		u.allegiance = Unit.Allegiance.PLAYER
@@ -746,6 +772,50 @@ func _spawn_barracks_soldiers(count: int) -> void:
 		u.move_speed = 5.0
 		u.source_barracks_id = get_instance_id()
 		u.set_guard_home(spawn_center)
-		var offset: Vector3 = Vector3(randf_range(-2.4, 2.4), 0.0, randf_range(-2.4, 2.4))
+		var offset: Vector3 = Vector3(randf_range(-3.0, 3.0), 0.0, randf_range(-3.0, 3.0))
 		u.global_position = spawn_center + offset
 		allies.add_child(u)
+
+
+func resurrect_barbarian() -> bool:
+	var barracks_id: int = get_instance_id()
+	if not GameState.resurrect_barbarian(barracks_id):
+		return false
+	_spawn_barracks_soldiers(1)
+	return true
+
+
+func add_spikes() -> bool:
+	if building_type != BuildingType.DOOR:
+		return false
+	if is_spiked:
+		return false
+	is_spiked = true
+	_apply_visual()
+	return true
+
+
+func get_door_spike_damage_per_sec() -> float:
+	if not is_spiked:
+		return 0.0
+	return 8.0
+
+
+func convert_wall_to_tower() -> bool:
+	if building_type != BuildingType.DEFENSIVE_WALL:
+		return false
+	
+	building_type = BuildingType.GUARD_TOWER
+	level = 1
+	_apply_visual()
+	
+	# Créer l'IA de la tour
+	var guard_tower_script = GDScript.new()
+	guard_tower_script.source_code = load("res://scripts/guard_tower_ai.gd").source_code
+	
+	var guard_tower_ai = Node3D.new()
+	guard_tower_ai.set_script(guard_tower_script)
+	add_child(guard_tower_ai)
+	guard_tower_ai.tower_building = self
+	
+	return true

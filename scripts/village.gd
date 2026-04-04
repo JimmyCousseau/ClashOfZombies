@@ -20,6 +20,8 @@ const EDITOR_PREVIEW_BUILDING_TYPES: Array[int] = [
 	VillageBuilding.BuildingType.FARM,
 	VillageBuilding.BuildingType.DOOR,
 	VillageBuilding.BuildingType.PATH,
+	VillageBuilding.BuildingType.WORKSHOP,
+	VillageBuilding.BuildingType.GUARD_TOWER,
 ]
 
 var _grid: Dictionary = {} # Vector2i -> VillageBuilding
@@ -206,10 +208,18 @@ func _spawn_building_at_cell(t: int, cell: Vector2i, free: bool) -> bool:
 	_refresh_path_visuals_near(cell)
 	GameState.invalidate_navigation()
 	if t == VillageBuilding.BuildingType.CANNON:
-		var ai := CannonAI.new()
+		var ai: CannonAI = CannonAI.new()
 		ai.name = "CannonAI"
 		b.add_child(ai)
 		ai.setup(b)
+	elif t == VillageBuilding.BuildingType.GUARD_TOWER:
+		var GuardTowerAIScript: GDScript = load("res://scripts/guard_tower_ai.gd")
+		var ai: Node = Node.new()
+		ai.set_script(GuardTowerAIScript)
+		ai.name = "GuardTowerAI"
+		b.add_child(ai)
+		if ai.has_method("setup"):
+			ai.call("setup", b)
 	return true
 
 
@@ -282,6 +292,12 @@ func _handle_primary_action(screen_pos: Vector2) -> void:
 			_selected_building = null
 			_hide_building_panel()
 			_toggle_door_panel()
+			return
+		if clicked_building.building_type == VillageBuilding.BuildingType.DEFENSIVE_WALL:
+			_selected_building = null
+			_hide_building_panel()
+			clicked_building.convert_wall_to_tower()
+			print("Mur converti en tour de garde!")
 			return
 		_hide_door_panel()
 		_selected_building = clicked_building

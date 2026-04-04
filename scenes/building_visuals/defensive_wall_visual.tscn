@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_stone"]
+albedo_color = Color(0.5, 0.48, 0.45, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_stone_dark"]
+albedo_color = Color(0.35, 0.33, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="mesh_wall"]
+material = SubResource("mat_stone")
+size = Vector3(2.0, 1.2, 0.6)
+
+[sub_resource type="BoxMesh" id="mesh_brick"]
+material = SubResource("mat_stone_dark")
+size = Vector3(0.5, 0.3, 0.6)
+
+[node name="DefensiveWallVisual" type="Node3D"]
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_wall")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="BrickPattern1" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_brick")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0.95, 0)
+
+[node name="BrickPattern2" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_brick")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.95, 0)
+
+[node name="BrickPattern3" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_brick")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.95, 0)
