@@ -42,6 +42,7 @@ func is_selected_valid() -> bool:
 # ---------------------------------------------------------------------------
 
 func get_building_panel_info() -> Dictionary:
+	@warning_ignore("confusable_local_usage")
 	if not is_selected_valid():
 		return {"valid": false}
 
@@ -51,6 +52,8 @@ func get_building_panel_info() -> Dictionary:
 	var details   := b.get_effect_summary()
 	var action_label   := "Aucune action"
 	var action_enabled := false
+	var upgrade_label := "Niveau max"
+	var upgrade_enabled := false
 
 	if b.building_type == VillageBuilding.BuildingType.BARRACKS:
 		var active  := b.get_barracks_active_soldier_count()
@@ -64,21 +67,39 @@ func get_building_panel_info() -> Dictionary:
 			action_enabled = GameState.can_afford(cost)
 		else:
 			action_label = "Garnison complète"
+	elif b.building_type == VillageBuilding.BuildingType.WORKSHOP:
+		details = "Boulets de canon : %d\nFleches : %d" % [GameState.cannonballs, GameState.arrows]
+		if GameState.can_afford(GameState.CANNONBALL_CRAFT_COST):
+			action_label = "Fabriquer boulet (%s)" % GameState.format_resource_pack(GameState.CANNONBALL_CRAFT_COST, true)
+			action_enabled = true
+		else:
+			action_label = "Boulet indisponible"
+		if GameState.can_afford(GameState.ARROW_CRAFT_COST):
+			upgrade_label = "Fabriquer fleche (%s)" % GameState.format_resource_pack(GameState.ARROW_CRAFT_COST, true)
+			upgrade_enabled = true
+		else:
+			upgrade_label = "Fleche indisponible"
 	else:
 		details += "\n" + GameState.get_build_description(b.building_type)
-
-	var upgrade_cost    := b.get_upgrade_cost()
-	var upgrade_enabled := b.can_upgrade() and GameState.can_afford(upgrade_cost)
-	var upgrade_label: String
-	if b.can_upgrade():
-		upgrade_label = "Améliorer (%s)" % GameState.format_resource_pack(upgrade_cost, true)
-		details += "\n" + b.get_upgrade_summary()
-	else:
-		upgrade_label = "Niveau max"
+		var upgrade_cost    := b.get_upgrade_cost()
+		upgrade_enabled = b.can_upgrade() and GameState.can_afford(upgrade_cost)
+		if b.can_upgrade():
+			upgrade_label = "Améliorer (%s)" % GameState.format_resource_pack(upgrade_cost, true)
+			details += "\n" + b.get_upgrade_summary()
+		else:
+			upgrade_label = "Niveau max"
 
 	var refund      := b.get_destroy_refund()
 	var refund_text := GameState.format_resource_pack(refund, true)
 	var destroy_label := "Détruire" + (" (%s)" % refund_text if refund_text != "" else "")
+
+	var repair_cost := b.get_repair_cost(b.max_hp - b.hp)
+	var repair_enabled := b.hp < b.max_hp and GameState.can_afford(repair_cost)
+	var repair_label: String
+	if b.hp < b.max_hp:
+		repair_label = "Réparer (%s)" % GameState.format_resource_pack(repair_cost, true)
+	else:
+		repair_label = "Réparé"
 
 	return {
 		"valid":           true,
@@ -91,6 +112,8 @@ func get_building_panel_info() -> Dictionary:
 		"upgrade_enabled": upgrade_enabled,
 		"destroy_label":   destroy_label,
 		"destroy_enabled": b.can_player_destroy(),
+		"repair_label":    repair_label,
+		"repair_enabled":  repair_enabled,
 	}
 
 
@@ -137,13 +160,40 @@ func execute_action() -> bool:
 		return false
 	if _selected.building_type == VillageBuilding.BuildingType.BARRACKS:
 		return _selected.refill_barracks()
+	if _selected.building_type == VillageBuilding.BuildingType.WORKSHOP:
+		if GameState.can_afford(GameState.CANNONBALL_CRAFT_COST):
+			GameState.spend(GameState.CANNONBALL_CRAFT_COST)
+			GameState.cannonballs += 1
+			GameState.resources_changed.emit()
+			return true
 	return false
 
 
 func upgrade() -> bool:
 	if not is_selected_valid():
 		return false
+	if _selected.building_type == VillageBuilding.BuildingType.WORKSHOP:
+		if GameState.can_afford(GameState.ARROW_CRAFT_COST):
+			GameState.spend(GameState.ARROW_CRAFT_COST)
+			GameState.arrows += 1
+			GameState.resources_changed.emit()
+			return true
 	return _selected.upgrade()
+
+
+func repair_selected() -> bool:
+	if not is_selected_valid():
+		return false
+	var missing := _selected.max_hp - _selected.hp
+	if missing <= 0:
+		return false
+	var cost := _selected.get_repair_cost(missing)
+	if not GameState.can_afford(cost):
+		return false
+	_selected.repair(missing)
+	GameState.spend(cost)
+	GameState.resources_changed.emit()
+	return true
 
 
 func destroy() -> bool:
@@ -154,6 +204,7 @@ func destroy() -> bool:
 	GameState.add_resources(_selected.get_destroy_refund())
 	var target := _selected
 	deselect()
+	_grid_map.unregister(target.cell, target)
 	target.queue_free()
 	return true
 

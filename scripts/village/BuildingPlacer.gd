@@ -63,6 +63,20 @@ func spawn_at_cell(building_type: int, cell: Vector2i, free: bool) -> bool:
 	var b: VillageBuilding = BUILDING_SCENE.instantiate()
 	b.building_type = building_type as VillageBuilding.BuildingType
 	b.cell = cell
+
+	# Récupérer le CollisionShape3D
+	var collision_shape := b.get_node("CollisionShape3D") as CollisionShape3D
+	if collision_shape and collision_shape.shape is BoxShape3D:
+			var box_shape := collision_shape.shape as BoxShape3D
+			var taille_originale_x: float = box_shape.size.x
+			var taille_originale_z: float = box_shape.size.z
+
+			var taille_souhaitee: float = 1.9
+			var facteur_echelle: float = min(taille_originale_x, taille_originale_z)
+			var facteur: float = taille_souhaitee / facteur_echelle
+
+			b.scale = Vector3(facteur, facteur, facteur)
+
 	b.position = _grid_map.cell_to_world(cell)
 	_parent.add_child(b)
 	_grid_map.register(cell, b)

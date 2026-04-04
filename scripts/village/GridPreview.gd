@@ -21,7 +21,8 @@ func setup(grid_map: VillageGridMap) -> void:
 
 
 func show_for(building_type: int) -> void:
-	hide()
+	hide_preview()
+	show()
 	_preview_root = Node3D.new()
 	_preview_root.name = "_GridPreview"
 	add_child(_preview_root)
@@ -39,11 +40,13 @@ func hide_preview() -> void:
 
 
 func _show_grid_preview() -> void:
+	var checkerboard_offset: int = 0
+	
 	for x in range(GameState.GRID_SIZE.x):
 		for y in range(GameState.GRID_SIZE.y):
 			var cell := Vector2i(x, y)
-			if (cell.x + cell.y) % 2 == 0:
-				_create_cell_visual(_grid_map.cell_to_world(cell))
+			if (cell.x + cell.y + checkerboard_offset) % 2 == 0:
+				_create_cell_visual(_grid_map.cell_to_world(Vector2i(x, y)))
 
 
 func _show_tower_preview() -> void:
@@ -57,7 +60,7 @@ func _create_cell_visual(world_pos: Vector3) -> void:
 	mesh.size = Vector3(GameState.CELL_SIZE - 0.1, 0.05, GameState.CELL_SIZE - 0.1)
 	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.2, 0.8, 0.2, 0.3)
+	mat.albedo_color = Color(0.2, 0.8, 0.2, 0.5)
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mi.material_override = mat
 	mi.position = world_pos + Vector3(0, 0.1, 0)

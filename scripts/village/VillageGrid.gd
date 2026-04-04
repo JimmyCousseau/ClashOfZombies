@@ -57,6 +57,7 @@ func _ready() -> void:
 	hero_manager.spawn()
 	GameState.recompute_storage_caps(grid_map.get_buildings())
 	path_visuals.refresh_all()
+	
 
 
 func _init_modules() -> void:
@@ -270,19 +271,20 @@ func get_main_door_world_position() -> Vector3:
 	return Vector3(0, 0, GameState.get_inner_half_extent() + GameState.WALL_THICKNESS * 0.5)
 
 
-func command_hero_move(world_pos: Vector3)   -> void:   hero_manager.move_to(world_pos)
-func send_hero_on_exploration()              -> void:   hero_manager.send_on_exploration()
-func execute_hero_door_action()              -> bool:   return hero_manager.execute_door_action()
-func cycle_hero_focus()                      -> String: return hero_manager.cycle_focus()
-func get_hero_focus_label()                  -> String: return hero_manager.get_focus_label()
-func get_hero_status_text()                  -> String: return hero_manager.get_status_text()
-func get_hero_door_action_label()            -> String: return hero_manager.get_door_action_label()
-func can_execute_hero_door_action()          -> bool:   return hero_manager.can_execute_door_action()
-func get_door_panel_info()                   -> Dictionary: return selection_manager.get_door_panel_info()
-func get_selected_building_panel_info()      -> Dictionary: return selection_manager.get_building_panel_info()
-func execute_selected_building_action()      -> bool:   return selection_manager.execute_action()
-func upgrade_selected_building()             -> bool:   return selection_manager.upgrade()
-func destroy_selected_building()             -> bool:   return selection_manager.destroy()
+func command_hero_move(world_pos: Vector3)   -> void:   if hero_manager: hero_manager.move_to(world_pos)
+func send_hero_on_exploration()              -> void:   if hero_manager: hero_manager.send_on_exploration()
+func execute_hero_door_action()              -> bool:   return hero_manager.execute_door_action() if hero_manager else false
+func cycle_hero_focus()                      -> String: return hero_manager.cycle_focus() if hero_manager else ""
+func get_hero_focus_label()                  -> String: return hero_manager.get_focus_label() if hero_manager else ""
+func get_hero_status_text()                  -> String: return hero_manager.get_status_text() if hero_manager else ""
+func get_hero_door_action_label()            -> String: return hero_manager.get_door_action_label() if hero_manager else ""
+func can_execute_hero_door_action()          -> bool:   return hero_manager.can_execute_door_action() if hero_manager else false
+func get_door_panel_info()                   -> Dictionary: return selection_manager.get_door_panel_info() if selection_manager else {}
+func get_selected_building_panel_info()      -> Dictionary: return selection_manager.get_building_panel_info() if selection_manager else {"valid": false}
+func execute_selected_building_action()      -> bool:   return selection_manager.execute_action() if selection_manager else false
+func upgrade_selected_building()             -> bool:   return selection_manager.upgrade() if selection_manager else false
+func destroy_selected_building()             -> bool:   return selection_manager.destroy() if selection_manager else false
+func repair_selected_building()              -> bool:   return selection_manager.repair_selected() if selection_manager else false
 func get_automatic_production_pack()         -> Dictionary: return production_manager.get_current_production_pack()
 func get_buildings_snapshot()                -> Array[VillageBuilding]: return grid_map.get_buildings().duplicate()
 

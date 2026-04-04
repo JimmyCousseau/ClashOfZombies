@@ -22,7 +22,7 @@
 
 2. **Village & Buildings**
    - **Main Scene**: `scenes/main.tscn` (contains the playable village)
-   - **Building System**: `scripts/building.gd` and `scripts/village.gd`
+   - **Building System**: `scripts/buildings/VillageBuilding.gd` and `scripts/village/VillageGrid.gd`
    - Buildings are placed on a grid defined in `GameState.GRID_SIZE`
    - Each building type (TOWN_HALL, GOLD_MINE, CANNON, BARRACKS, etc.) has specific costs, production rates, and behaviors
    - Walls are created via `scripts/wall_ring.gd` — defines the defensive perimeter

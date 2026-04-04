@@ -391,6 +391,8 @@ func get_inventory_text() -> String:
 	lines.append("Fer : %d / %d" % [iron, iron_max])
 	lines.append("Nourriture : %d / %d" % [food, food_max])
 	lines.append("Objets speciaux : %d" % items)
+	lines.append("Boulets de canon : %d" % cannonballs)
+	lines.append("Fleches : %d" % arrows)
 	lines.append("")
 	lines.append("Inventaire special :")
 	for key in SPECIAL_ITEM_ORDER:
@@ -662,7 +664,7 @@ func can_resurrect_barbarian(barracks_id: int) -> bool:
 	return get_dead_barbarian_count(barracks_id) > 0
 
 
-func get_resurrection_cost(barracks_id: int) -> Dictionary:
+func get_resurrection_cost(_barracks_id: int) -> Dictionary:
 	var base_cost: Dictionary = TRAIN_BARBARIAN_COST.duplicate()
 	var result: Dictionary = {}
 	for key in base_cost.keys():

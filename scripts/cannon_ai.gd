@@ -29,7 +29,7 @@ func _process(delta: float) -> void:
 		if e == null or not is_instance_valid(e):
 			continue
 		var d2: float = origin.distance_squared_to(e.global_position)
-		if d2 <= range_value * range_value and d2 < best_d2:
+		if  d2 < best_d2:
 			best_d2 = d2
 			best = e
 	
@@ -80,7 +80,7 @@ func angle_difference(from: float, to: float) -> float:
 	return diff
 
 
-func _fire_bullet(origin: Vector3, target: Unit) -> void:
+func _fire_bullet(_origin: Vector3, target: Unit) -> void:
 	GameState.add_resources({"cannonballs": -1})
 	
 	var bullet_script: GDScript = load("res://scripts/bullet.gd")

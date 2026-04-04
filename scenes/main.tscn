@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c8mainscene01"]
 
 [ext_resource type="Script" uid="uid://bqy3hn8yojs21" path="res://scripts/camera_rig.gd" id="1_cam"]
-[ext_resource type="Script" uid="uid://cnf6oafaid6jt" path="res://scripts/village.gd" id="2_vil"]
+[ext_resource type="Script" path="res://scripts/village/VillageGrid.gd" id="2_vil"]
 [ext_resource type="Script" uid="uid://bcfawp03hh4pr" path="res://scripts/wave_manager.gd" id="3_wave"]
 [ext_resource type="Script" uid="uid://b7lxbroflqsuq" path="res://scripts/ui/hud_main.gd" id="4_hud"]
 [ext_resource type="Script" uid="uid://dmrld6xqo67wb" path="res://scripts/world_decor.gd" id="5_decor"]
@@ -399,6 +399,11 @@ text = "Action"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Ameliorer"
+
+[node name="BtnBuildingRepair" type="Button" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=1351985148]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reparer"
 
 [node name="BtnBuildingDestroy" type="Button" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=1351985147]
 layout_mode = 2

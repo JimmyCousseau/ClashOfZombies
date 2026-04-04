@@ -5,6 +5,7 @@ extends Control
 @onready var top_bar: PanelContainer = $TopBar
 @onready var toggle_btn: Button = $TopBar/MarginContainer/HBoxContainer/ToggleBuildBar
 @onready var inventory_btn: Button = $TopBar/MarginContainer/HBoxContainer/BtnInventory
+@onready var repair_all_btn: Button = $TopBar/MarginContainer/HBoxContainer/BtnRepairAll
 @onready var test_btn: Button = $TopBar/MarginContainer/HBoxContainer/BtnTest
 @onready var bottom_dock: Control = $BottomDock
 @onready var build_list: VBoxContainer = $BottomDock/PanelContainer/MarginContainer/VBox/BuildScroll/BuildList
@@ -22,6 +23,7 @@ extends Control
 @onready var building_detail_label: Label = $BuildingDock/PanelContainer/MarginContainer/VBox/BuildingDetail
 @onready var building_action_btn: Button = $BuildingDock/PanelContainer/MarginContainer/VBox/HBox/BtnBuildingAction
 @onready var building_upgrade_btn: Button = $BuildingDock/PanelContainer/MarginContainer/VBox/HBox/BtnBuildingUpgrade
+@onready var building_repair_btn: Button = $BuildingDock/PanelContainer/MarginContainer/VBox/HBox/BtnBuildingRepair
 @onready var building_destroy_btn: Button = $BuildingDock/PanelContainer/MarginContainer/VBox/HBox/BtnBuildingDestroy
 @onready var inventory_panel: PanelContainer = $InventoryDock/PanelContainer
 @onready var inventory_dock: Control = $InventoryDock
@@ -50,11 +52,13 @@ func _ready() -> void:
 	UIStyles.style_info_panel(test_panel)
 	UIStyles.style_button(toggle_btn)
 	UIStyles.style_button(inventory_btn)
+	UIStyles.style_button(repair_all_btn)
 	UIStyles.style_button(test_btn)
 	UIStyles.style_button(door_action_btn)
 	UIStyles.style_button(door_focus_btn)
 	UIStyles.style_button(building_action_btn)
 	UIStyles.style_button(building_upgrade_btn)
+	UIStyles.style_button(building_repair_btn)
 	UIStyles.style_button(building_destroy_btn)
 	UIStyles.style_button(test_resources_btn)
 	UIStyles.style_button(test_wave_btn)
@@ -65,11 +69,13 @@ func _ready() -> void:
 	# Connecte les boutons d'action
 	toggle_btn.pressed.connect(_on_toggle_build_bar)
 	inventory_btn.pressed.connect(_on_toggle_inventory)
+	repair_all_btn.pressed.connect(_on_btn_repair_all)
 	test_btn.pressed.connect(_on_toggle_test_dock)
 	door_action_btn.pressed.connect(_on_btn_door_action)
 	door_focus_btn.pressed.connect(_on_btn_door_focus)
 	building_action_btn.pressed.connect(_on_btn_building_action)
 	building_upgrade_btn.pressed.connect(_on_btn_building_upgrade)
+	building_repair_btn.pressed.connect(_on_btn_repair_building)
 	building_destroy_btn.pressed.connect(_on_btn_destroy_building)
 	test_resources_btn.pressed.connect(_on_btn_test_resources)
 	test_wave_btn.pressed.connect(_on_btn_test_wave)
@@ -192,6 +198,13 @@ func _on_btn_building_upgrade() -> void:
 	_refresh_building_panel()
 
 
+func _on_btn_repair_building() -> void:
+	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
+	if village and village.has_method("repair_selected_building"):
+		village.call("repair_selected_building")
+	_refresh_building_panel()
+
+
 func _on_btn_test_resources() -> void:
 	var pack := {"wood": 220, "stone": 220, "iron": 140, "food": 220}
 	GameState.add_resources(pack)
@@ -235,6 +248,8 @@ func _on_btn_test_door() -> void:
 
 
 func _refresh_door_panel() -> void:
+	if get_tree() == null:
+		return
 	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
 	if village == null or not village.has_method("get_door_panel_info"):
 		return
@@ -248,6 +263,8 @@ func _refresh_door_panel() -> void:
 
 
 func _refresh_building_panel() -> void:
+	if get_tree() == null:
+		return
 	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
 	if village == null or not village.has_method("get_selected_building_panel_info"):
 		return
@@ -262,6 +279,8 @@ func _refresh_building_panel() -> void:
 	building_action_btn.disabled = not bool(info.get("action_enabled", false))
 	building_upgrade_btn.text = String(info.get("upgrade_label", "Ameliorer"))
 	building_upgrade_btn.disabled = not bool(info.get("upgrade_enabled", false))
+	building_repair_btn.text = String(info.get("repair_label", "Reparer"))
+	building_repair_btn.disabled = not bool(info.get("repair_enabled", false))
 	building_destroy_btn.text = String(info.get("destroy_label", "Detruire"))
 	building_destroy_btn.disabled = not bool(info.get("destroy_enabled", false))
 
@@ -274,6 +293,9 @@ func _refresh_test_panel() -> void:
 	var lines: Array[String] = []
 	var wave_manager: Node = get_tree().get_first_node_in_group("wave_manager")
 	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
+	if get_tree() == null or village == null:
+		test_status_label.text = "Chargement..."
+		return
 	if GameState.enemies_alive > 0:
 		var current_wave: int = 1
 		if wave_manager and wave_manager.has_method("get_current_wave"):

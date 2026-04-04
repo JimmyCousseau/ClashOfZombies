@@ -21,15 +21,15 @@ func _process(delta: float) -> void:
 
 	var origin: Vector3 = _building.global_position + Vector3(0, 2.0, 0)
 	var best: Unit = null
-	var range_sq: float = RANGE * RANGE
-	var best_d2: float = INF
+	var range_value: float = RANGE
+	var best_d2: float = range_value * range_value
 
 	for n in get_tree().get_nodes_in_group("enemies"):
 		var e := n as Unit
 		if e == null or not is_instance_valid(e):
 			continue
 		var d2: float = origin.distance_squared_to(e.global_position)
-		if d2 <= range_sq and d2 < best_d2:
+		if  d2 < best_d2:
 			best_d2 = d2
 			best = e
 
@@ -55,7 +55,7 @@ func _fire_arrow(origin: Vector3, target: Unit) -> void:
 	arrow.set_script(arrow_script)
 	arrow.global_position = origin
 	if arrow.has_method("setup"):
-		arrow.call("setup", target, _building.get)
+		arrow.call("setup", target, DAMAGE)
 	if _building and _building.get_parent():
 		_building.get_parent().add_child(arrow)
 	else:

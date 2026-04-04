@@ -426,19 +426,6 @@ func _add_box(parent: Node3D, pos: Vector3, size: Vector3, mat: Material) -> voi
 	parent.add_child(mi)
 
 
-func _add_cylinder(parent: Node3D, pos: Vector3, radius: float, height: float, mat: Material, rot: Vector3 = Vector3.ZERO) -> void:
-	var mi := MeshInstance3D.new()
-	var cyl := CylinderMesh.new()
-	cyl.top_radius = radius
-	cyl.bottom_radius = radius
-	cyl.height = height
-	mi.mesh = cyl
-	mi.material_override = mat
-	mi.position = pos
-	mi.rotation_degrees = rot
-	parent.add_child(mi)
-
-
 func _clear_parts() -> void:
 	cannon_barrel = null
 	if visual_container:
@@ -450,30 +437,29 @@ func _clear_parts() -> void:
 
 
 func _apply_visual() -> void:
-	_clear_parts()
+	# _clear_parts()
 	mesh_root.position = Vector3.ZERO
 	var top_y := 2.0
 	if not use_generated_visuals and _apply_authored_visual():
 		top_y = float(BUILDING_VISUAL_TOP_Y.get(building_type, 2.0))
 	else:
 		match building_type:
-			BuildingType.TOWN_HALL:        top_y = _build_town_hall()
-			BuildingType.GOLD_MINE:        top_y = _build_gold_mine()
-			BuildingType.ELIXIR_COLLECTOR: top_y = _build_elixir_collector()
-			BuildingType.CANNON:           top_y = _build_cannon()
-			BuildingType.BARRACKS:         top_y = _build_barracks()
-			BuildingType.GOLD_STORAGE:     top_y = _build_gold_storage()
-			BuildingType.ELIXIR_STORAGE:   top_y = _build_elixir_storage()
-			BuildingType.FARM:             top_y = _build_farm()
-			BuildingType.DOOR:             top_y = _build_door()
-			BuildingType.PATH:             top_y = _build_path()
-			BuildingType.GUARD_TOWER:      top_y = _build_guard_tower()
+			BuildingType.TOWN_HALL:        top_y = 4.2
+			BuildingType.GOLD_MINE:        top_y = 2.15
+			BuildingType.ELIXIR_COLLECTOR: top_y = 3.45
+			BuildingType.CANNON:           top_y = 1.45
+			BuildingType.BARRACKS:         top_y = 2.25
+			BuildingType.GOLD_STORAGE:     top_y = 2.35
+			BuildingType.ELIXIR_STORAGE:   top_y = 2.65
+			BuildingType.FARM:             top_y = 1.45
+			BuildingType.DOOR:             top_y = 1.1
+			BuildingType.PATH:             top_y = 0.12
+			BuildingType.GUARD_TOWER:      top_y = 1.0
 	if level > 1 and building_type != BuildingType.PATH and not is_destroyed:
 		_add_level_details(top_y)
 	if label_3d:
 		label_3d.position = Vector3(0, top_y + 0.35, 0)
 	_set_collision_for_type()
-
 
 func _apply_authored_visual() -> bool:
 	if visual_container == null:
@@ -556,163 +542,29 @@ func _has_path_connection(offset: Vector2i) -> bool:
 	return false
 
 
-# ---------------------------------------------------------------------------
-# Builders visuels (inchangés)
-# ---------------------------------------------------------------------------
-
-func _build_town_hall() -> float:
-	var stone := _mat(Color(0.62, 0.6, 0.54))
-	var trim  := _mat(Color(0.34, 0.38, 0.4))
-	var roof  := _mat(Color(0.34, 0.24, 0.18))
-	var gold  := _mat(Color(0.58, 0.58, 0.54), 0.5, 0.2)
-	_add_box(mesh_root, Vector3(0, 0.2, 0),    Vector3(2.8, 0.35, 2.8), stone)
-	_add_box(mesh_root, Vector3(0, 1.05, 0),   Vector3(2.35, 1.5, 2.35), stone)
-	_add_box(mesh_root, Vector3(0, 1.95, 0),   Vector3(2.55, 0.45, 2.55), roof)
-	_add_box(mesh_root, Vector3(-0.75, 0.95, 1.22), Vector3(0.55, 0.85, 0.35), trim)
-	_add_box(mesh_root, Vector3(0.75, 0.95, 1.22),  Vector3(0.55, 0.85, 0.35), trim)
-	_add_box(mesh_root, Vector3(0, 2.55, 0),   Vector3(1.15, 1.1, 1.15), stone)
-	_add_box(mesh_root, Vector3(0, 3.35, 0),   Vector3(1.35, 0.35, 1.35), roof)
-	_add_cylinder(mesh_root, Vector3(0, 3.75, 0), 0.12, 0.9, gold)
-	return 4.2
-
-
-func _build_gold_mine() -> float:
-	var wood := _mat(Color(0.45, 0.31, 0.18))
-	var gold := _mat(Color(0.58, 0.42, 0.26), 0.45, 0.2)
-	var dark := _mat(Color(0.24, 0.18, 0.12))
-	_add_box(mesh_root, Vector3(0, 0.55, 0),    Vector3(2.0, 1.05, 2.0), wood)
-	_add_box(mesh_root, Vector3(0, 1.35, 0),    Vector3(2.2, 0.45, 2.2), gold)
-	_add_box(mesh_root, Vector3(0, 1.75, 0.95), Vector3(0.65, 0.35, 0.45), dark)
-	_add_cylinder(mesh_root, Vector3(0.85, 1.15, -0.4), 0.35, 0.25, gold, Vector3(90, 0, 35))
-	return 2.15
-
-
-func _build_elixir_collector() -> float:
-	var base    := _mat(Color(0.32, 0.34, 0.32))
-	var tank    := _mat(Color(0.46, 0.48, 0.5), 0.4, 0.08)
-	var glow    := _mat(Color(0.58, 0.6, 0.62), 0.35, 0.08)
-	var crystal := _mat(Color(0.38, 0.42, 0.45), 0.25, 0.1)
-	_add_box(mesh_root, Vector3(0, 0.35, 0), Vector3(1.9, 0.65, 1.9), base)
-	_add_cylinder(mesh_root, Vector3(0, 1.25, 0),        0.75, 1.35, tank)
-	_add_cylinder(mesh_root, Vector3(0, 2.35, 0),        0.55, 0.85, glow)
-	_add_cylinder(mesh_root, Vector3(0.35, 2.95, 0.2),   0.18, 0.95, crystal, Vector3(15, 0, 8))
-	_add_cylinder(mesh_root, Vector3(-0.25, 3.05, -0.15),0.15, 0.75, crystal, Vector3(-12, 0, -5))
-	return 3.45
-
-
-func _build_cannon() -> float:
-	var stone := _mat(Color(0.55, 0.54, 0.5))
-	var metal := _mat(Color(0.22, 0.23, 0.26), 0.35, 0.65)
-	_add_cylinder(mesh_root, Vector3(0, 0.35, 0), 0.95, 0.65, stone)
-	_add_cylinder(mesh_root, Vector3(0, 0.85, 0), 0.35, 0.45, stone)
-	cannon_barrel = MeshInstance3D.new()
-	var cyl := CylinderMesh.new()
-	cyl.top_radius = 0.22; cyl.bottom_radius = 0.28; cyl.height = 1.35
-	cannon_barrel.mesh = cyl
-	cannon_barrel.material_override = metal
-	cannon_barrel.position = Vector3(0.55, 0.95, 0)
-	cannon_barrel.rotation_degrees = Vector3(0, 0, 82)
-	mesh_root.add_child(cannon_barrel)
-	_add_box(mesh_root, Vector3(-0.15, 1.05, 0), Vector3(0.45, 0.35, 0.35), metal)
-	return 1.45
-
-
-func _build_guard_tower() -> float:
-	return 1.0
-
-
-func _build_barracks() -> float:
-	var wall := _mat(Color(0.48, 0.36, 0.24))
-	var roof := _mat(Color(0.28, 0.22, 0.18))
-	var door := _mat(Color(0.35, 0.22, 0.12))
-	_add_box(mesh_root, Vector3(0, 0.75, 0),    Vector3(3.0, 1.45, 2.1), wall)
-	_add_box(mesh_root, Vector3(0, 1.65, 0),    Vector3(3.15, 0.4, 2.25), roof)
-	_add_box(mesh_root, Vector3(0, 0.75, 1.08), Vector3(0.85, 1.1, 0.2), door)
-	_add_box(mesh_root, Vector3(-1.1, 1.95, 0), Vector3(0.5, 0.25, 0.5), roof)
-	_add_box(mesh_root, Vector3(1.1, 1.95, 0),  Vector3(0.5, 0.25, 0.5), roof)
-	return 2.25
-
-
-func _build_gold_storage() -> float:
-	var stone := _mat(Color(0.42, 0.36, 0.24))
-	var gold  := _mat(Color(0.22, 0.24, 0.2), 0.42, 0.12)
-	var dark  := _mat(Color(0.18, 0.16, 0.12))
-	_add_box(mesh_root, Vector3(0, 0.55, 0), Vector3(2.2, 1.05, 2.2), stone)
-	_add_box(mesh_root, Vector3(0, 1.35, 0), Vector3(2.35, 0.35, 2.35), dark)
-	_add_box(mesh_root, Vector3(0, 1.75, 0), Vector3(1.6, 0.45, 1.6), gold)
-	_add_cylinder(mesh_root, Vector3(0.75, 2.05, 0.75),   0.18, 0.35, gold)
-	_add_cylinder(mesh_root, Vector3(-0.65, 2.05, -0.55), 0.16, 0.3, gold)
-	return 2.35
-
-
-func _build_elixir_storage() -> float:
-	var stone := _mat(Color(0.35, 0.36, 0.38))
-	var purp  := _mat(Color(0.24, 0.26, 0.28), 0.34, 0.18)
-	var glow  := _mat(Color(0.7, 0.34, 0.18), 0.28, 0.16)
-	_add_box(mesh_root, Vector3(0, 0.5, 0), Vector3(2.1, 0.95, 2.1), stone)
-	_add_cylinder(mesh_root, Vector3(-0.45, 1.35, 0.2), 0.55, 1.1, purp)
-	_add_cylinder(mesh_root, Vector3(0.5, 1.45, -0.25), 0.48, 0.95, glow)
-	_add_cylinder(mesh_root, Vector3(0, 2.35, 0),       0.35, 0.55, glow)
-	return 2.65
-
-
-func _build_farm() -> float:
-	var wood  := _mat(Color(0.42, 0.28, 0.14))
-	var straw := _mat(Color(0.82, 0.68, 0.28))
-	var crop  := _mat(Color(0.28, 0.62, 0.22))
-	var soil  := _mat(Color(0.4, 0.3, 0.18))
-	_add_box(mesh_root, Vector3(0, 0.12, 0),    Vector3(2.6, 0.2, 2.6), soil)
-	_add_box(mesh_root, Vector3(0, 0.55, 0),    Vector3(2.0, 0.85, 1.6), wood)
-	_add_box(mesh_root, Vector3(0, 1.1, 0),     Vector3(2.15, 0.35, 1.75), straw)
-	_add_box(mesh_root, Vector3(0, 0.45, 0.95), Vector3(1.4, 0.35, 0.25), crop)
-	_add_cylinder(mesh_root, Vector3(-0.7, 0.75, -0.5),  0.12, 0.45, crop, Vector3(8, 0, 0))
-	_add_cylinder(mesh_root, Vector3(0.65, 0.75, -0.45), 0.12, 0.45, crop, Vector3(-6, 0, 0))
-	return 1.45
-
-
-func _build_door() -> float:
-	if is_destroyed:
-		var wreck_wood  := _mat(Color(0.24, 0.18, 0.14))
-		var wreck_metal := _mat(Color(0.22, 0.22, 0.24), 0.35, 0.55)
-		_add_box(mesh_root, Vector3(-0.42, 0.52, 0),  Vector3(0.22, 1.0, 0.28), wreck_wood)
-		_add_box(mesh_root, Vector3(0.42, 0.52, 0),   Vector3(0.22, 1.0, 0.28), wreck_wood)
-		_add_box(mesh_root, Vector3(0.0, 0.08, 0.0),  Vector3(1.1, 0.12, 0.48), wreck_metal)
-		_add_box(mesh_root, Vector3(0.16, 0.2, 0.0),  Vector3(0.55, 0.12, 0.24), wreck_wood)
-		return 0.95
-	var wood  := _mat(Color(0.35, 0.22, 0.1))
-	var metal := _mat(Color(0.18, 0.18, 0.2), 0.3, 0.6)
-	var h     := float(level - 1) * 0.08
-	_add_box(mesh_root, Vector3(0, 0.15, 0),          Vector3(1.5, 0.3, 0.8), metal)
-	_add_box(mesh_root, Vector3(0, 0.65 + h * 0.3, 0),Vector3(1.2, 1.0 + h, 0.6), wood)
-	_add_cylinder(mesh_root, Vector3(0.65, 0.65, 0),  0.08, 0.15, metal, Vector3(0, 0, 90))
-	return 1.1 + h
-
-
-func _build_path() -> float:
-	var stone := _mat(Color(0.62, 0.62, 0.58), 0.96, 0.02)
-	var dust  := _mat(Color(0.76, 0.74, 0.68), 0.98, 0.0)
-	_add_box(mesh_root, Vector3(0, 0.03, 0), Vector3(1.1, 0.08, 1.1), stone)
-	_add_box(mesh_root, Vector3(0, 0.08, 0), Vector3(0.82, 0.02, 0.82), dust)
-	var north := _has_path_connection(Vector2i(0, -1))
-	var south := _has_path_connection(Vector2i(0, 1))
-	var west  := _has_path_connection(Vector2i(-1, 0))
-	var east  := _has_path_connection(Vector2i(1, 0))
-	if north:
-		_add_box(mesh_root, Vector3(0, 0.03, -0.63), Vector3(1.02, 0.08, 1.26), stone)
-		_add_box(mesh_root, Vector3(0, 0.08, -0.63), Vector3(0.74, 0.02, 1.08), dust)
-	if south:
-		_add_box(mesh_root, Vector3(0, 0.03, 0.63), Vector3(1.02, 0.08, 1.26), stone)
-		_add_box(mesh_root, Vector3(0, 0.08, 0.63), Vector3(0.74, 0.02, 1.08), dust)
-	if west:
-		_add_box(mesh_root, Vector3(-0.63, 0.03, 0), Vector3(1.26, 0.08, 1.02), stone)
-		_add_box(mesh_root, Vector3(-0.63, 0.08, 0), Vector3(1.08, 0.02, 0.74), dust)
-	if east:
-		_add_box(mesh_root, Vector3(0.63, 0.03, 0), Vector3(1.26, 0.08, 1.02), stone)
-		_add_box(mesh_root, Vector3(0.63, 0.08, 0), Vector3(1.08, 0.02, 0.74), dust)
-	return 0.12
-
-
 func _exit_tree() -> void:
 	var p := get_parent()
 	if p and p.has_method("notify_building_removed"):
 		p.notify_building_removed(cell, self)
+
+func _spawn_initial_garrison() -> void:
+	_spawn_barracks_soldiers(get_barracks_max_soldiers())
+
+func _spawn_barracks_soldiers(count: int) -> void:
+	if count <= 0:
+		return
+	var allies: Node3D = get_tree().get_first_node_in_group("ally_units")
+	if allies == null:
+		return
+	var spawn_center: Vector3 = global_position
+	for i in count:
+		var u: Barbarian = preload("res://scenes/barbarian.tscn").instantiate()
+		u.allegiance = Unit.Allegiance.PLAYER
+		u.hp = 100
+		u.max_hp = 100
+		u.move_speed = 5.0
+		u.source_barracks_id = get_instance_id()
+		u.set_guard_home(spawn_center)
+		var offset: Vector3 = Vector3(randf_range(-3.0, 3.0), 0.0, randf_range(-3.0, 3.0))
+		u.global_position = spawn_center + offset
+		allies.add_child(u)
