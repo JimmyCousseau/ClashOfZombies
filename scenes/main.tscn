@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dmrld6xqo67wb" path="res://scripts/world_decor.gd" id="5_decor"]
 [ext_resource type="Script" uid="uid://3pyfpdojku7k" path="res://scripts/wall_ring.gd" id="6_wall"]
 [ext_resource type="Script" uid="uid://d301dbf0rw6lj" path="res://scripts/ui/wave_display.gd" id="8_wave"]
+[ext_resource type="Script" path="res://scripts/buildings/VillageBuilding.gd" id="9_a8y0u"]
 [ext_resource type="Script" uid="uid://t8glklu3afw8" path="res://scripts/ui/building_buttons.gd" id="9_buttons"]
 [ext_resource type="Script" uid="uid://ddg5ecu8by0q4" path="res://scripts/ui/game_overlay.gd" id="10_overlay"]
 [ext_resource type="PackedScene" path="res://scenes/tree.tscn" id="11_tree"]
@@ -134,10 +135,12 @@ script = ExtResource("2_vil")
 
 [node name="StarterTownHall" parent="Village" unique_id=1228872670 instance=ExtResource("14_building")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+script = ExtResource("9_a8y0u")
 building_type = 0
 
 [node name="StarterDoor" parent="Village" unique_id=1207115054 instance=ExtResource("14_building")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14.575)
+script = ExtResource("9_a8y0u")
 building_type = 8
 
 [node name="HeroStart" type="Marker3D" parent="Village" unique_id=2143782190]
@@ -196,6 +199,10 @@ text = "Nuit —"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="BtnRepairAll" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=265971745]
+layout_mode = 2
+text = "Réparer tout"
+
 [node name="ToggleBuildBar" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=129711866]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
@@ -212,6 +219,7 @@ layout_mode = 2
 text = "Tests"
 
 [node name="TestDock" type="Control" parent="UI/HUD" unique_id=1315575074]
+visible = false
 layout_mode = 1
 anchors_preset = 0
 offset_left = 50.0
@@ -437,7 +445,6 @@ label_settings = SubResource("LabelSettings_85g3d")
 autowrap_mode = 3
 
 [node name="BottomDock" type="Control" parent="UI/HUD" unique_id=1055675769]
-visible = false
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -486,17 +493,6 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
-
-[node name="BtnMissionFocus" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=142552313]
-layout_mode = 2
-text = "Mission : Bois"
-
-[node name="HSeparator" type="HSeparator" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=224278821]
-layout_mode = 2
-
-[node name="BtnRepairAll" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=1554195644]
-layout_mode = 2
-text = "Réparer tout"
 
 [node name="BuildingButtons" type="Node" parent="UI/HUD/BottomDock/PanelContainer" unique_id=-961633963]
 script = ExtResource("9_buttons")

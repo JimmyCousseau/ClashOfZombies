@@ -2,6 +2,8 @@ extends Node3D
 ## Muraille de pierre autour de la grille du village (collision + rendu).
 
 var _mat_stone: StandardMaterial3D
+var _mat_stone_dark: StandardMaterial3D
+var _mat_wood: StandardMaterial3D
 
 
 func _ready() -> void:
@@ -10,6 +12,15 @@ func _ready() -> void:
 	_mat_stone = StandardMaterial3D.new()
 	_mat_stone.albedo_color = Color(0.58, 0.55, 0.5)
 	_mat_stone.roughness = 0.92
+	
+	_mat_stone_dark = StandardMaterial3D.new()
+	_mat_stone_dark.albedo_color = Color(0.45, 0.42, 0.38)
+	_mat_stone_dark.roughness = 0.92
+	
+	_mat_wood = StandardMaterial3D.new()
+	_mat_wood.albedo_color = Color(0.38, 0.28, 0.15)
+	_mat_wood.roughness = 0.8
+	
 	var inner: float = GameState.get_inner_half_extent()
 	var w: float = GameState.WALL_THICKNESS
 	var h: float = GameState.WALL_HEIGHT
@@ -26,6 +37,15 @@ func _ready() -> void:
 	
 	_add_wall(Vector3(-(inner + w * 0.5), y, 0), Vector3(w, h, span))
 	_add_wall(Vector3((inner + w * 0.5), y, 0), Vector3(w, h, span))
+	
+	# Ajouter les tours de garde aux angles de la porte pour l'aspect château
+	var tower_height: float = h + 0.6
+	var tower_base_y: float = tower_height * 0.5 - 0.02
+	var door_center_z: float = inner + w * 0.5
+	var tower_offset_x: float = door_width * 0.5 + 0.3
+	
+	_add_gate_tower(Vector3(-tower_offset_x, tower_base_y, door_center_z), tower_height)
+	_add_gate_tower(Vector3(tower_offset_x, tower_base_y, door_center_z), tower_height)
 
 
 func _add_wall(pos: Vector3, size: Vector3) -> void:
@@ -45,3 +65,52 @@ func _add_wall(pos: Vector3, size: Vector3) -> void:
 	body.add_child(col)
 	body.position = pos
 	add_child(body)
+
+
+func _add_gate_tower(pos: Vector3, height: float) -> void:
+	## Ajoute une petite tour de guet à la porte pour l'aspect château
+	var body := StaticBody3D.new()
+	body.collision_layer = 1
+	body.collision_mask = 1
+	body.position = pos
+	
+	# Corps de la tour
+	var tower_size: Vector3 = Vector3(0.8, height, 0.8)
+	var mi_tower := MeshInstance3D.new()
+	var box_tower := BoxMesh.new()
+	box_tower.size = tower_size
+	mi_tower.mesh = box_tower
+	mi_tower.material_override = _mat_stone_dark
+	mi_tower.position.y = 0
+	body.add_child(mi_tower)
+	
+	# Collision
+	var col := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = tower_size
+	col.shape = shape
+	col.position.y = 0
+	body.add_child(col)
+	
+	# Petite plateforme en bois
+	var mi_platform := MeshInstance3D.new()
+	var box_platform := BoxMesh.new()
+	box_platform.size = Vector3(1.0, 0.15, 1.0)
+	mi_platform.mesh = box_platform
+	mi_platform.material_override = _mat_wood
+	mi_platform.position.y = height * 0.5 + 0.1
+	body.add_child(mi_platform)
+	
+	# Petite tourelle au sommet
+	var mi_turret := MeshInstance3D.new()
+	var cyl_turret := CylinderMesh.new()
+	cyl_turret.top_radius = 0.25
+	cyl_turret.bottom_radius = 0.28
+	cyl_turret.height = 0.3
+	mi_turret.mesh = cyl_turret
+	mi_turret.material_override = _mat_stone_dark
+	mi_turret.position.y = height * 0.5 + 0.25
+	body.add_child(mi_turret)
+	
+	add_child(body)
+

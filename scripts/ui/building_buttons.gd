@@ -61,7 +61,6 @@ const BUILD_CARDS: Array[Dictionary] = [
 
 @onready var mode_label: Label = $"../MarginContainer/VBox/ModeLabel"
 @onready var build_list: VBoxContainer = $"../MarginContainer/VBox/BuildScroll/BuildList"
-@onready var mission_button: Button = $"../MarginContainer/VBox/BtnMissionFocus"
 
 var _current_mode: int = -1
 var _report_timer: float = 0.0
@@ -72,10 +71,7 @@ var _build_card_data: Dictionary = {}
 
 
 func _ready() -> void:
-	mission_button.pressed.connect(_on_btn_cycle_mission)
-	GameState.exploration_completed.connect(_on_exploration_completed)
 	_build_cards()
-	call_deferred("_refresh_mission_button")
 	clear_build_selection()
 
 
@@ -143,7 +139,6 @@ func _set_build_mode(building_type: int) -> void:
 	if village and village.has_method("set_build_mode"):
 		village.set_build_mode(building_type)
 	_sync_build_button_states()
-	_refresh_mode_label()
 
 
 func clear_build_selection() -> void:
@@ -152,22 +147,10 @@ func clear_build_selection() -> void:
 	if village and village.has_method("clear_build_mode"):
 		village.call("clear_build_mode")
 	_sync_build_button_states()
-	_refresh_mode_label()
 
 
 func _process(delta: float) -> void:
-	_mission_refresh_timer -= delta
-	if _mission_refresh_timer <= 0.0:
-		_refresh_mission_button()
-		if _report_timer <= 0.0:
-			_refresh_mode_label()
-		_mission_refresh_timer = 0.2
-	if _report_timer <= 0.0:
-		return
-	_report_timer -= delta
-	if _report_timer <= 0.0:
-		_report_text = ""
-		_refresh_mode_label()
+	return
 
 
 func _refresh_button_texts() -> void:
@@ -185,43 +168,6 @@ func _refresh_button_texts() -> void:
 func _format_cost(cost: Dictionary) -> String:
 	var formatted: String = GameState.format_resource_pack(cost, true)
 	return formatted if formatted != "" else "gratuit"
-
-
-func _on_btn_cycle_mission() -> void:
-	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
-	if village and village.has_method("cycle_hero_focus"):
-		village.call("cycle_hero_focus")
-	_refresh_mission_button()
-	_refresh_mode_label()
-
-
-func _on_exploration_completed(report: String) -> void:
-	_report_text = report
-	_report_timer = 6.0
-	_refresh_mode_label()
-
-
-func _refresh_mission_button() -> void:
-	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
-	var focus_label: String = "Bois"
-	if village and village.has_method("get_hero_focus_label"):
-		focus_label = String(village.call("get_hero_focus_label"))
-	mission_button.text = "Mission : %s" % focus_label
-
-
-func _refresh_mode_label() -> void:
-	if _report_timer > 0.0 and _report_text != "":
-		mode_label.text = _report_text
-		return
-	var village: Node3D = get_tree().get_first_node_in_group("village") as Node3D
-	var focus_label: String = "Bois"
-	if village and village.has_method("get_hero_focus_label"):
-		focus_label = String(village.call("get_hero_focus_label"))
-	var build_label: String = "Aucune"
-	if _current_mode >= 0:
-		var card: Dictionary = _build_card_data.get(_current_mode, {})
-		build_label = String(card.get("title", "Aucune"))
-	mode_label.text = "Construction : %s | Mission : %s" % [build_label, focus_label]
 
 
 func _sync_build_button_states() -> void:

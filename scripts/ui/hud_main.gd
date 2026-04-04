@@ -7,8 +7,6 @@ extends Control
 @onready var inventory_btn: Button = $TopBar/MarginContainer/HBoxContainer/BtnInventory
 @onready var test_btn: Button = $TopBar/MarginContainer/HBoxContainer/BtnTest
 @onready var bottom_dock: Control = $BottomDock
-@onready var repair_btn: Button = $BottomDock/PanelContainer/MarginContainer/VBox/BtnRepairAll
-@onready var mission_btn: Button = $BottomDock/PanelContainer/MarginContainer/VBox/BtnMissionFocus
 @onready var build_list: VBoxContainer = $BottomDock/PanelContainer/MarginContainer/VBox/BuildScroll/BuildList
 @onready var building_buttons: Node = $BottomDock/PanelContainer/BuildingButtons
 @onready var door_panel: PanelContainer = $DoorDock/PanelContainer
@@ -53,8 +51,6 @@ func _ready() -> void:
 	UIStyles.style_button(toggle_btn)
 	UIStyles.style_button(inventory_btn)
 	UIStyles.style_button(test_btn)
-	UIStyles.style_button(repair_btn)
-	UIStyles.style_button(mission_btn)
 	UIStyles.style_button(door_action_btn)
 	UIStyles.style_button(door_focus_btn)
 	UIStyles.style_button(building_action_btn)
@@ -70,7 +66,6 @@ func _ready() -> void:
 	toggle_btn.pressed.connect(_on_toggle_build_bar)
 	inventory_btn.pressed.connect(_on_toggle_inventory)
 	test_btn.pressed.connect(_on_toggle_test_dock)
-	repair_btn.pressed.connect(_on_btn_repair_all)
 	door_action_btn.pressed.connect(_on_btn_door_action)
 	door_focus_btn.pressed.connect(_on_btn_door_focus)
 	building_action_btn.pressed.connect(_on_btn_building_action)

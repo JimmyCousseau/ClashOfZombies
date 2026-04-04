@@ -82,6 +82,7 @@ func angle_difference(from: float, to: float) -> float:
 
 func _fire_bullet(origin: Vector3, target: Unit) -> void:
 	GameState.add_resources({"cannonballs": -1})
+	
 	var bullet_script: GDScript = load("res://scripts/bullet.gd")
 	var bullet: Node3D = Node3D.new()
 	bullet.set_script(bullet_script)

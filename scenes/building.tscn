@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c8building01"]
 
-[ext_resource type="Script" path="res://scripts/building.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/buildings/VillageBuilding.gd" id="1_script"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_default"]
 size = Vector3(2.5, 2.5, 2.5)

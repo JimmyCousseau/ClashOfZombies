@@ -1,49 +1,134 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://4nkrongptpxl"]
 
 [sub_resource type="StandardMaterial3D" id="mat_stone"]
 albedo_color = Color(0.5, 0.48, 0.45, 1)
 
-[sub_resource type="StandardMaterial3D" id="mat_wood"]
-albedo_color = Color(0.38, 0.28, 0.15, 1)
-
-[sub_resource type="StandardMaterial3D" id="mat_rope"]
-albedo_color = Color(0.55, 0.45, 0.25, 1)
-
-[sub_resource type="StandardMaterial3D" id="mat_dark"]
-albedo_color = Color(0.2, 0.18, 0.16, 1)
-
-[sub_resource type="BoxMesh" id="mesh_base"]
-material = SubResource("mat_stone")
-size = Vector3(1.6, 0.6, 1.6)
-
 [sub_resource type="BoxMesh" id="mesh_tower"]
 material = SubResource("mat_stone")
-size = Vector3(1.2, 1.4, 1.2)
-
-[sub_resource type="BoxMesh" id="mesh_platform"]
-material = SubResource("mat_wood")
 size = Vector3(1.4, 0.2, 1.4)
 
-[sub_resource type="CylinderMesh" id="mesh_turret"]
-material = SubResource("mat_dark")
-top_radius = 0.3
-bottom_radius = 0.35
-height = 0.4
+[sub_resource type="StandardMaterial3D" id="mat_armor"]
+albedo_color = Color(0.3, 0.3, 0.35, 1)
 
-[node name="GuardTowerVisual" type="Node3D"]
+[sub_resource type="BoxMesh" id="mesh_body"]
+material = SubResource("mat_armor")
+size = Vector3(0.15, 0.25, 0.15)
 
-[node name="Base" type="MeshInstance3D" parent="."]
-mesh = SubResource("mesh_base")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+[sub_resource type="StandardMaterial3D" id="mat_skin"]
+albedo_color = Color(0.9, 0.75, 0.65, 1)
 
-[node name="Tower" type="MeshInstance3D" parent="."]
+[sub_resource type="SphereMesh" id="mesh_head"]
+material = SubResource("mat_skin")
+radius = 0.12
+height = 0.24
+
+[sub_resource type="BoxMesh" id="mesh_arm"]
+material = SubResource("mat_skin")
+size = Vector3(0.08, 0.15, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="mat_bow"]
+albedo_color = Color(0.4, 0.25, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="mesh_bow"]
+material = SubResource("mat_bow")
+size = Vector3(0.06, 0.3, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_va1ag"]
+material = SubResource("mat_stone")
+size = Vector3(0.2, 0.2, 1.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t7nvm"]
+material = SubResource("mat_stone")
+size = Vector3(0.13, 0.1, 0.3)
+
+[node name="GuardTowerVisual" type="Node3D" unique_id=867862539]
+
+[node name="Tower" type="MeshInstance3D" parent="." unique_id=1654924541]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 mesh = SubResource("mesh_tower")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
 
-[node name="Platform" type="MeshInstance3D" parent="."]
-mesh = SubResource("mesh_platform")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+[node name="Archer" type="Node3D" parent="." unique_id=867862600]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.45497245, 0)
 
-[node name="Turret" type="MeshInstance3D" parent="."]
-mesh = SubResource("mesh_turret")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+[node name="Body" type="MeshInstance3D" parent="Archer" unique_id=1495955718]
+mesh = SubResource("mesh_body")
+
+[node name="Head" type="MeshInstance3D" parent="Archer" unique_id=914241535]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("mesh_head")
+
+[node name="LeftArm" type="MeshInstance3D" parent="Archer" unique_id=1960783717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.1, 0)
+mesh = SubResource("mesh_arm")
+
+[node name="RightArm" type="MeshInstance3D" parent="Archer" unique_id=1880845523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.1, 0)
+mesh = SubResource("mesh_arm")
+
+[node name="Bow" type="MeshInstance3D" parent="Archer" unique_id=662316195]
+transform = Transform3D(0.9553365, -0.29552022, 0, 0.29552022, 0.9553365, 0, 0, 0, 1, 0.15, 0.08, 0)
+mesh = SubResource("mesh_bow")
+
+[node name="Wall" type="MeshInstance3D" parent="." unique_id=2007867933]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.29, 0)
+mesh = SubResource("BoxMesh_va1ag")
+
+[node name="Wall2" type="MeshInstance3D" parent="." unique_id=272629179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.29, 0)
+mesh = SubResource("BoxMesh_va1ag")
+
+[node name="Wall3" type="MeshInstance3D" parent="." unique_id=736486236]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.29, -0.6)
+mesh = SubResource("BoxMesh_va1ag")
+
+[node name="Wall4" type="MeshInstance3D" parent="." unique_id=1081064659]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.29, 0.6)
+mesh = SubResource("BoxMesh_va1ag")
+
+[node name="Wall5" type="MeshInstance3D" parent="." unique_id=2016055960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.635, 0.44, 0.55)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall6" type="MeshInstance3D" parent="." unique_id=846426121]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.635, 0.44, 0)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall7" type="MeshInstance3D" parent="." unique_id=521498298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.635, 0.44, -0.55)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall8" type="MeshInstance3D" parent="." unique_id=254955904]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.635, 0.44, -0.55)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall9" type="MeshInstance3D" parent="." unique_id=406964941]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.635, 0.44, 0)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall10" type="MeshInstance3D" parent="." unique_id=1990007009]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.635, 0.44, 0.55)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall11" type="MeshInstance3D" parent="." unique_id=1281165344]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 0.55, 0.44, 0.635)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall12" type="MeshInstance3D" parent="." unique_id=471178797]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 0, 0.44, 0.635)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall13" type="MeshInstance3D" parent="." unique_id=1271952604]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -0.55, 0.44, 0.635)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall14" type="MeshInstance3D" parent="." unique_id=1863358829]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 0.55, 0.44, -0.635)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall15" type="MeshInstance3D" parent="." unique_id=967532117]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 0, 0.44, -0.635)
+mesh = SubResource("BoxMesh_t7nvm")
+
+[node name="Wall16" type="MeshInstance3D" parent="." unique_id=1715571877]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -0.55, 0.44, -0.635)
+mesh = SubResource("BoxMesh_t7nvm")

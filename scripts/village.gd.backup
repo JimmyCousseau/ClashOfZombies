@@ -217,10 +217,13 @@ func _spawn_building_at_cell(t: int, cell: Vector2i, free: bool) -> bool:
 		b.add_child(ai)
 		ai.setup(b)
 	elif t == VillageBuilding.BuildingType.GUARD_TOWER:
-		var ai: GuardTowerAI = GuardTowerAI.new()
+		var GuardTowerAIScript: GDScript = load("res://scripts/guard_tower_ai.gd")
+		var ai: Node = Node.new()
+		ai.set_script(GuardTowerAIScript)
 		ai.name = "GuardTowerAI"
 		b.add_child(ai)
-		ai.setup(b)
+		if ai.has_method("setup"):
+			ai.call("setup", b)
 	return true
 
 
@@ -382,12 +385,12 @@ func _try_place_at_world(hit: Vector3) -> bool:
 
 func _try_place_tower_at_world(hit: Vector3) -> bool:
 	var tower_positions: Array[Vector3] = [
-		Vector3(-14.575, 1.4, -14.575),
-		Vector3(14.575, 1.4, -14.575),
-		Vector3(-14.575, 1.4, 14.575),
-		Vector3(14.575, 1.4, 14.575),
-		Vector3(-1.5, 1.4, 14.575),
-		Vector3(1.5, 1.4, 14.575),
+		Vector3(-14.575, 1.5, -14.575),
+		Vector3(14.575, 1.5, -14.575),
+		Vector3(-14.575, 1.5, 14.575),
+		Vector3(14.575, 1.5, 14.575),
+		Vector3(-1.5, 1.5, 14.575),
+		Vector3(1.5, 1.5, 14.575),
 	]
 	
 	var snap_distance: float = 2.0
@@ -404,10 +407,12 @@ func _try_place_tower_at_world(hit: Vector3) -> bool:
 			add_child(b)
 			_buildings.append(b)
 			
-			var ai: GuardTowerAI = GuardTowerAI.new()
-			ai.name = "GuardTowerAI"
-			b.add_child(ai)
-			ai.setup(b)
+			var guard_tower_script = GDScript.new()
+			guard_tower_script.source_code = load("res://scripts/guard_tower_ai.gd").source_code
+			var guard_tower_ai = Node3D.new()
+			guard_tower_ai.set_script(guard_tower_script)
+			b.add_child(guard_tower_ai)
+			guard_tower_ai.call("setup", b)
 			
 			GameState.invalidate_navigation()
 			return true
