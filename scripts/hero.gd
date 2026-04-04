@@ -16,6 +16,7 @@ enum HeroState {
 @export var return_duration_sec: float = 4.0
 @export var idle_wander_min_sec: float = 3.5
 @export var idle_wander_max_sec: float = 7.0
+@export var body_rotation_speed: float = 8.0
 
 var exploration_focus: String = "wood"
 var _state: HeroState = HeroState.IN_VILLAGE
@@ -27,6 +28,8 @@ var _loot_scale: float = 1.0
 var _base_collision_layer: int = 2
 var _base_collision_mask: int = 1
 var _idle_wander_timer: float = 0.0
+var _is_moving: bool = false
+var _animation_player: AnimationPlayer
 
 
 func _ready() -> void:
@@ -34,6 +37,7 @@ func _ready() -> void:
 		_build_hero_visual()
 	if Engine.is_editor_hint():
 		return
+	_animation_player = $AnimationPlayer
 	add_to_group("allies")
 	add_to_group("hero")
 	_base_collision_layer = collision_layer
@@ -49,19 +53,24 @@ func _physics_process(delta: float) -> void:
 		HeroState.IN_VILLAGE:
 			_process_village_move(delta)
 		HeroState.MOVING_TO_GATE:
+			_is_moving = true
 			var gate_entry: Vector3 = GameState.get_door_inside_entry()
 			if global_position.distance_to(gate_entry) <= 0.45:
 				_begin_exploration()
 			else:
 				_move_to_world(delta, gate_entry, 0.2)
 		HeroState.EXPLORING:
+			_is_moving = false
 			_exploration_timer -= delta
 			if _exploration_timer <= 0.0:
 				_finish_exploration()
 		HeroState.RETURNING:
+			_is_moving = false
 			_exploration_timer -= delta
 			if _exploration_timer <= 0.0:
 				_finish_exploration()
+	
+	_update_animation(delta)
 
 
 func move_within_village(target_pos: Vector3) -> bool:
@@ -176,6 +185,7 @@ func is_available_in_village() -> bool:
 func _process_village_move(delta: float) -> void:
 	if not _has_move_target:
 		_stop_motion()
+		_is_moving = false
 		_idle_wander_timer -= delta
 		if _idle_wander_timer <= 0.0:
 			_pick_idle_destination()
@@ -184,8 +194,10 @@ func _process_village_move(delta: float) -> void:
 		_has_move_target = false
 		_clear_path()
 		_stop_motion()
+		_is_moving = false
 		_reset_idle_wander_timer()
 		return
+	_is_moving = true
 	_move_to_world(delta, _move_target, 0.15)
 
 
@@ -281,7 +293,6 @@ func _reset_idle_wander_timer() -> void:
 
 
 func _pick_idle_destination() -> void:
-	if (game_state == null) return
 	var inner: float = GameState.get_inner_half_extent() - 2.2
 	for i in 8:
 		var candidate := Vector3(randf_range(-inner, inner), 0.0, randf_range(-inner, inner))
@@ -298,3 +309,40 @@ func _format_time(total_seconds: float) -> String:
 	var minutes: int = sec / 60
 	var seconds: int = sec % 60
 	return "%02d:%02d" % [minutes, seconds]
+
+
+func _update_animation(delta: float) -> void:
+	_update_arm_state()
+	_update_body_rotation(delta)
+
+
+func _update_arm_state() -> void:
+	if not _animation_player:
+		return
+	
+	if _is_moving:
+		if _animation_player.has_animation("arm_swing_moving") and _animation_player.current_animation != "arm_swing_moving":
+			_animation_player.play("arm_swing_moving")
+	else:
+		if _animation_player.has_animation("arm_idle") and _animation_player.current_animation != "arm_idle":
+			_animation_player.play("arm_idle")
+
+
+func _update_body_rotation(delta: float) -> void:
+	if velocity.length() < 0.1:
+		return
+	
+	var target_angle: float = atan2(velocity.x, velocity.z)
+	var current_angle: float = mesh_root.rotation.y
+	
+	var angle_diff: float = angle_difference(current_angle, target_angle)
+	var rotation_step: float = clamp(angle_diff * body_rotation_speed * delta, -PI, PI)
+	
+	mesh_root.rotation.y = current_angle + rotation_step
+
+
+func angle_difference(from: float, to: float) -> float:
+	var diff: float = fmod(to - from + PI, TAU) - PI
+	if diff < -PI:
+		diff += TAU
+	return diff

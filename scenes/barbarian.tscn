@@ -24,21 +24,62 @@ albedo_color = Color(0.16, 0.18, 0.16, 1)
 material = SubResource("StandardMaterial3D_trim")
 size = Vector3(0.48, 0.12, 0.38)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_weapon"]
-albedo_color = Color(0.35, 0.35, 0.38, 1)
-roughness = 0.45
-
-[sub_resource type="BoxMesh" id="BoxMesh_weapon"]
-material = SubResource("StandardMaterial3D_weapon")
-size = Vector3(0.12, 0.55, 0.12)
+[sub_resource type="BoxMesh" id="BoxMesh_limb"]
+material = SubResource("StandardMaterial3D_body")
+size = Vector3(0.1, 0.38, 0.1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.38
 height = 0.95
 
+[sub_resource type="Animation" id="Animation_arm_idle"]
+length = 1.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/LeftArm")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.24, 0.32, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.32, 0.45, 0.02)
+
+[sub_resource type="Animation" id="Animation_arm_swing_moving"]
+length = 1.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/LeftArm")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.24, 0.32, 0, 0.25, 1, -0.24, 0.32, 0, 0.5, 1, -0.24, 0.32, 0, 0.75, 1, -0.24, 0.32, 0, 1, 1, -0.24, 0.32, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.32, 0.45, 0.02, 0.25, 1, 0.32, 0.45, 0.02, 0.5, 1, 0.32, 0.45, 0.02, 0.75, 1, 0.32, 0.45, 0.02, 1, 1, 0.32, 0.45, 0.02)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_barbarian"]
+_animations = {
+"arm_idle": SubResource("Animation_arm_idle"),
+"arm_swing_moving": SubResource("Animation_arm_swing_moving")
+}
+
 [node name="Barbarian" type="CharacterBody3D" unique_id=1120409126]
 collision_layer = 2
 script = ExtResource("1_script")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anim_library = SubResource("AnimationLibrary_barbarian")
 
 [node name="MeshRoot" type="Node3D" parent="." unique_id=472494346]
 
@@ -54,13 +95,13 @@ mesh = SubResource("SphereMesh_head")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.96707475, 0)
 mesh = SubResource("BoxMesh_band")
 
-[node name="Weapon2" type="MeshInstance3D" parent="MeshRoot" unique_id=1523423785]
-transform = Transform3D(-0.86602515, 0.50000006, -8.742278e-08, 0.49999985, 0.8660255, 0, 7.5710325e-08, -4.3711392e-08, -1, -0.29120874, 0.35271892, 0.09761405)
-mesh = SubResource("BoxMesh_weapon")
+[node name="LeftArm" type="MeshInstance3D" parent="MeshRoot" unique_id=711585273]
+transform = Transform3D(0.9718118, 0.23575856, 0, -0.23575856, 0.9718118, 0, 0, 0, 1, -0.24, 0.32, 0)
+mesh = SubResource("BoxMesh_limb")
 
-[node name="Weapon" type="MeshInstance3D" parent="MeshRoot" unique_id=975816923]
-transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 0.28525603, 0.35244644, 0.09446726)
-mesh = SubResource("BoxMesh_weapon")
+[node name="RightArm" type="MeshInstance3D" parent="MeshRoot" unique_id=717132857]
+transform = Transform3D(0.21798423, -0.9759525, 0, 0.9759525, 0.21798423, 0, 0, 0, 1, 0.32, 0.45, 0.02)
+mesh = SubResource("BoxMesh_limb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=850453328]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)

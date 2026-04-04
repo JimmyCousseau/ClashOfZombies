@@ -11,6 +11,8 @@ var _guard_home: Vector3 = Vector3.ZERO
 var _idle_wander_timer: float = 0.0
 var _wander_target: Vector3 = Vector3.ZERO
 var _has_wander_target: bool = false
+var _animation_player: AnimationPlayer
+var _is_moving: bool = false
 
 
 func _ready() -> void:
@@ -18,6 +20,7 @@ func _ready() -> void:
 		_build_barbarian_visual()
 	if Engine.is_editor_hint():
 		return
+	_animation_player = $AnimationPlayer
 	add_to_group("allies")
 	_pick_target()
 	_create_health_bar()
@@ -31,6 +34,7 @@ func _physics_process(delta: float) -> void:
 		_pick_target()
 	if _target_enemy == null or not is_instance_valid(_target_enemy):
 		_patrol_outside(delta)
+		_update_animation(delta)
 		return
 
 	var tp: Vector3 = _target_enemy.global_position
@@ -39,12 +43,16 @@ func _physics_process(delta: float) -> void:
 	if dist <= attack_range:
 		_stop_motion()
 		_clear_path()
+		_is_moving = false
 		_attack_acc += delta
 		if _attack_acc >= attack_cooldown:
 			_attack_acc = 0.0
 			_target_enemy.take_damage(attack_damage)
 	else:
+		_is_moving = true
 		_move_to_world(delta, tp, attack_range)
+	
+	_update_animation(delta)
 
 
 func configure_barracks_guard(barracks_id: int, guard_home: Vector3) -> void:
@@ -64,11 +72,14 @@ func _patrol_outside(delta: float) -> void:
 			_has_wander_target = false
 			_clear_path()
 			_stop_motion()
+			_is_moving = false
 			_reset_idle_wander_timer()
 			return
+		_is_moving = true
 		_move_to_world(delta, _wander_target, 0.15)
 		return
 	_stop_motion()
+	_is_moving = false
 	_idle_wander_timer -= delta
 	if _idle_wander_timer <= 0.0:
 		_pick_wander_target()
@@ -132,11 +143,35 @@ func _build_barbarian_visual() -> void:
 	band.material_override = _mat(trim_c)
 	band.position = Vector3(0, 0.88, 0)
 	mesh_root.add_child(band)
-	var weapon := MeshInstance3D.new()
-	var wbox := BoxMesh.new()
-	wbox.size = Vector3(0.12, 0.55, 0.12)
-	weapon.mesh = wbox
-	weapon.material_override = _mat(Color(0.35, 0.35, 0.38), 0.45)
-	weapon.position = Vector3(0.32, 0.45, 0.1)
-	weapon.rotation_degrees = Vector3(8, 0, -15)
-	mesh_root.add_child(weapon)
+	var left_arm := MeshInstance3D.new()
+	var arm_box := BoxMesh.new()
+	arm_box.size = Vector3(0.1, 0.38, 0.1)
+	left_arm.mesh = arm_box
+	left_arm.material_override = _mat(body_c)
+	left_arm.position = Vector3(-0.24, 0.32, 0)
+	left_arm.name = "LeftArm"
+	mesh_root.add_child(left_arm)
+	var right_arm := MeshInstance3D.new()
+	var arm_box2 := BoxMesh.new()
+	arm_box2.size = Vector3(0.1, 0.38, 0.1)
+	right_arm.mesh = arm_box2
+	right_arm.material_override = _mat(body_c)
+	right_arm.position = Vector3(0.32, 0.45, 0.02)
+	right_arm.name = "RightArm"
+	mesh_root.add_child(right_arm)
+
+
+func _update_animation(delta: float) -> void:
+	_update_arm_state()
+
+
+func _update_arm_state() -> void:
+	if not _animation_player:
+		return
+	
+	if _is_moving:
+		if _animation_player.has_animation("arm_swing_moving") and _animation_player.current_animation != "arm_swing_moving":
+			_animation_player.play("arm_swing_moving")
+	else:
+		if _animation_player.has_animation("arm_idle") and _animation_player.current_animation != "arm_idle":
+			_animation_player.play("arm_idle")

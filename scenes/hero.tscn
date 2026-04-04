@@ -41,9 +41,82 @@ size = Vector3(0.1, 0.56, 0.1)
 radius = 0.38
 height = 0.95
 
+[sub_resource type="Animation" id="Animation_arm_idle"]
+length = 1.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/LeftArm")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.28, 0.38, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.3769005, 0.5368783, 0.02)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/LeftArm")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0)
+tracks/3/type = "rotation_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/RightArm")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_arm_swing_moving"]
+length = 1.0
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/LeftArm")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.28, 0.38, 0, 0.25, 1, -0.28, 0.38, 0, 0.5, 1, -0.28, 0.38, 0, 0.75, 1, -0.28, 0.38, 0, 1, 1, -0.28, 0.38, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.3769005, 0.5368783, 0.02, 0.25, 1, 0.3769005, 0.5368783, 0.02, 0.5, 1, 0.3769005, 0.5368783, 0.02, 0.75, 1, 0.3769005, 0.5368783, 0.02, 1, 1, 0.3769005, 0.5368783, 0.02)
+tracks/2/type = "rotation_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/LeftArm")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.38268346, 0, 0, 0.25, 1, 0.30901699, 0, 0, 0.5, 1, 0, 0, 0, 0.75, 1, -0.30901699, 0, 0, 1, 1, -0.38268346, 0, 0)
+tracks/3/type = "rotation_3d"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/RightArm")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = PackedFloat32Array(0, 1, -0.38268346, 0, 0, 0.25, 1, -0.30901699, 0, 0, 0.5, 1, 0, 0, 0, 0.75, 1, 0.30901699, 0, 0, 1, 1, 0.38268346, 0, 0)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hero"]
+_animations = {
+"arm_idle": SubResource("Animation_arm_idle"),
+"arm_swing_moving": SubResource("Animation_arm_swing_moving")
+}
+
 [node name="Hero" type="CharacterBody3D" unique_id=252699452]
 collision_layer = 2
 script = ExtResource("1_script")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anim_library = SubResource("AnimationLibrary_hero")
 
 [node name="MeshRoot" type="Node3D" parent="." unique_id=42267791]
 
