@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_base"]
+albedo_color = Color(0.32, 0.34, 0.32, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_tank"]
+albedo_color = Color(0.46, 0.48, 0.5, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_glow"]
+albedo_color = Color(0.58, 0.6, 0.62, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_crystal"]
+albedo_color = Color(0.38, 0.42, 0.45, 1)
+
+[sub_resource type="BoxMesh" id="mesh_base"]
+material = SubResource("mat_base")
+size = Vector3(1.9, 0.65, 1.9)
+
+[sub_resource type="CylinderMesh" id="mesh_tank"]
+material = SubResource("mat_tank")
+top_radius = 0.75
+bottom_radius = 0.75
+height = 1.35
+
+[node name="ElixirCollectorVisual" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_base")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+
+[node name="Tank" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_tank")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+
+[node name="GlowTop" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_tank")
+material_override = SubResource("mat_glow")
+transform = Transform3D(0.733333, 0, 0, 0, 0.62963, 0, 0, 0, 0.733333, 0, 2.35, 0)
+
+[node name="CrystalA" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_tank")
+material_override = SubResource("mat_crystal")
+transform = Transform3D(0.24, 0, 0, 0, 0.703704, -0.0513561, 0, 0.188117, 0.192836, 0.35, 2.95, 0.2)
+
+[node name="CrystalB" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_tank")
+material_override = SubResource("mat_crystal")
+transform = Transform3D(0.2, 0, 0, 0, 0.5442, 0.0395944, 0, -0.15585, 0.193185, -0.25, 3.05, -0.15)

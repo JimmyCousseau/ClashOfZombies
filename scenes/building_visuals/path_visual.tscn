@@ -1,0 +1,67 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_stone"]
+albedo_color = Color(0.62, 0.62, 0.58, 1)
+roughness = 0.96
+
+[sub_resource type="StandardMaterial3D" id="mat_dust"]
+albedo_color = Color(0.76, 0.74, 0.68, 1)
+roughness = 0.98
+
+[sub_resource type="BoxMesh" id="mesh_base"]
+material = SubResource("mat_stone")
+size = Vector3(1.1, 0.08, 1.1)
+
+[sub_resource type="BoxMesh" id="mesh_top"]
+material = SubResource("mat_dust")
+size = Vector3(0.82, 0.02, 0.82)
+
+[node name="PathVisual" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_base")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+
+[node name="Top" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_top")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+
+[node name="NorthBase" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_base")
+transform = Transform3D(0.927273, 0, 0, 0, 1, 0, 0, 0, 1.14545, 0, 0.03, -0.63)
+
+[node name="NorthTop" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_top")
+transform = Transform3D(0.902439, 0, 0, 0, 1, 0, 0, 0, 1.31707, 0, 0.08, -0.63)
+
+[node name="SouthBase" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_base")
+transform = Transform3D(0.927273, 0, 0, 0, 1, 0, 0, 0, 1.14545, 0, 0.03, 0.63)
+
+[node name="SouthTop" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_top")
+transform = Transform3D(0.902439, 0, 0, 0, 1, 0, 0, 0, 1.31707, 0, 0.08, 0.63)
+
+[node name="WestBase" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_base")
+transform = Transform3D(1.14545, 0, 0, 0, 1, 0, 0, 0, 0.927273, -0.63, 0.03, 0)
+
+[node name="WestTop" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_top")
+transform = Transform3D(1.31707, 0, 0, 0, 1, 0, 0, 0, 0.902439, -0.63, 0.08, 0)
+
+[node name="EastBase" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_base")
+transform = Transform3D(1.14545, 0, 0, 0, 1, 0, 0, 0, 0.927273, 0.63, 0.03, 0)
+
+[node name="EastTop" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("mesh_top")
+transform = Transform3D(1.31707, 0, 0, 0, 1, 0, 0, 0, 0.902439, 0.63, 0.08, 0)

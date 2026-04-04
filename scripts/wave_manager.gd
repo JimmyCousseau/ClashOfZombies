@@ -1,65 +1,115 @@
 extends Node3D
-## Vagues de zombies : patrouille hors du village (sans attaque).
+## Attaques quotidiennes de zombies a 00:00 UTC.
 
 const ZOMBIE_SCENE := preload("res://scenes/zombie.tscn")
 
-@export var interval_sec: float = 14.0
 @export var base_count: int = 2
-@export var first_wave_delay: float = 8.0
 
-var _wave: int = 0
-var _time_to_next: float = 0.0
 var _wave_active: bool = false
+var _current_wave: int = 0
+var _first_attack_day_index: int = 0
+var _last_attack_day_index: int = -1
+var _next_attack_unix: int = 0
 
 
 func _ready() -> void:
-	_time_to_next = first_wave_delay
 	add_to_group("wave_manager")
 	GameState.game_over.connect(_on_game_over)
+	_first_attack_day_index = GameState.get_current_utc_day_index() + 1
+	_next_attack_unix = GameState.get_next_utc_midnight_unix()
 
 
 func _process(delta: float) -> void:
 	if GameState.is_paused:
 		return
-	
 	if _wave_active:
 		if GameState.enemies_alive <= 0:
 			_wave_active = false
-			_time_to_next = interval_sec
 		return
-	
-	_time_to_next -= delta
-	if _time_to_next > 0.0:
+	var now_unix: int = int(Time.get_unix_time_from_system())
+	if now_unix < _next_attack_unix:
 		return
-	_spawn_wave()
+	var attack_day_index: int = int(_next_attack_unix / 86400.0)
+	if attack_day_index != _last_attack_day_index:
+		_spawn_wave_for_day(attack_day_index)
+		_last_attack_day_index = attack_day_index
+	_next_attack_unix = (attack_day_index + 1) * 86400
+	while now_unix >= _next_attack_unix:
+		_next_attack_unix += 86400
 
 
 func _on_game_over() -> void:
 	GameState.is_paused = true
 
 
-func _spawn_wave() -> void:
-	_wave += 1
-	_wave_active = true
-	_time_to_next = 0.0
-	GameState.wave_started.emit(_wave)
-	var n: int = base_count + _wave
-	var door_pos: Vector3 = GameState.get_door_position()
-	for i in n:
-		var u: Zombie = ZOMBIE_SCENE.instantiate()
-		u.allegiance = Unit.Allegiance.ENEMY
-		u.hp = 55 + _wave * 5
-		u.max_hp = u.hp
-		add_child(u)
-		# Spawn outside the door (negative Z direction, away from village)
-		var spread_dist: float = randf_range(-3.0, 3.0)
-		var forward_dist: float = randf_range(-8.0, -5.0)
-		var offset: Vector3 = Vector3(spread_dist, 0.0, forward_dist)
-		u.global_position = door_pos - offset
-		u.setup_zombie_patrol()
+func _spawn_wave_for_day(attack_day_index: int) -> void:
+	var wave_index: int = maxi(1, attack_day_index - _first_attack_day_index + 1)
+	_start_wave(wave_index, base_count + wave_index * 2)
+
+
+func trigger_debug_next_wave() -> bool:
+	if _wave_active:
+		return false
+	var wave_index: int = get_next_wave_index()
+	_start_wave(wave_index, base_count + wave_index * 2)
+	return true
+
+
+func spawn_debug_reinforcements(count: int = 12) -> bool:
+	if count <= 0:
+		return false
+	var wave_index: int = maxi(1, max(_current_wave, get_next_wave_index()))
+	if not _wave_active:
+		_wave_active = true
+		_current_wave = wave_index
+		GameState.wave_started.emit(_current_wave)
+	_spawn_zombies(count, wave_index, 4.2, 8.2)
+	return true
+
+
+func clear_all_zombies() -> int:
+	var cleared: int = 0
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy is Zombie and is_instance_valid(enemy):
+			enemy.queue_free()
+			cleared += 1
+	if cleared > 0:
+		_wave_active = false
+	return cleared
 
 
 func get_time_to_next() -> float:
 	if _wave_active:
 		return 0.0
-	return maxf(0.0, _time_to_next)
+	return maxf(0.0, float(_next_attack_unix) - Time.get_unix_time_from_system())
+
+
+func get_current_wave() -> int:
+	return _current_wave
+
+
+func get_next_wave_index() -> int:
+	if _wave_active:
+		return _current_wave
+	var next_day_index: int = int(_next_attack_unix / 86400.0)
+	return maxi(1, next_day_index - _first_attack_day_index + 1)
+
+
+func _start_wave(wave_index: int, zombie_count: int) -> void:
+	_current_wave = maxi(1, wave_index)
+	_wave_active = true
+	GameState.wave_started.emit(_current_wave)
+	_spawn_zombies(zombie_count, _current_wave, 5.5, 10.0)
+
+
+func _spawn_zombies(zombie_count: int, wave_index: int, extra_radius_min: float, extra_radius_max: float) -> void:
+	for i in zombie_count:
+		var zombie: Zombie = ZOMBIE_SCENE.instantiate()
+		zombie.allegiance = Unit.Allegiance.ENEMY
+		zombie.hp = 70 + wave_index * 10
+		zombie.max_hp = zombie.hp
+		add_child(zombie)
+		var angle: float = randf() * TAU
+		var radius: float = GameState.get_patrol_ring_radius() + randf_range(extra_radius_min, extra_radius_max)
+		zombie.global_position = Vector3(cos(angle) * radius, 0.0, sin(angle) * radius)
+		zombie.setup_zombie_patrol()

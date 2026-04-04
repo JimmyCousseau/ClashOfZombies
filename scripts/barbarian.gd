@@ -1,39 +1,77 @@
+@tool
 class_name Barbarian
 extends Unit
 
+@export var idle_wander_min_sec: float = 2.0
+@export var idle_wander_max_sec: float = 5.0
+@export var patrol_radius: float = 6.0
+
+var source_barracks_id: int = 0
+var _guard_home: Vector3 = Vector3.ZERO
+var _idle_wander_timer: float = 0.0
+var _wander_target: Vector3 = Vector3.ZERO
+var _has_wander_target: bool = false
+
 
 func _ready() -> void:
+	if _should_use_generated_visuals():
+		_build_barbarian_visual()
+	if Engine.is_editor_hint():
+		return
 	add_to_group("allies")
-	_build_barbarian_visual()
 	_pick_target()
 	_create_health_bar()
+	if _guard_home == Vector3.ZERO:
+		_guard_home = global_position
+	_reset_idle_wander_timer()
 
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(_target_enemy):
 		_pick_target()
 	if _target_enemy == null or not is_instance_valid(_target_enemy):
-		velocity = Vector3.ZERO
-		move_and_slide()
-		global_position.y = 0.0
+		_patrol_outside(delta)
 		return
 
 	var tp: Vector3 = _target_enemy.global_position
-	var flat: Vector3 = Vector3(tp.x, global_position.y, tp.z)
-	var to_t: Vector3 = flat - global_position
-	var dist: float = to_t.length()
+	var dist: float = global_position.distance_to(tp)
 
 	if dist <= attack_range:
-		velocity = Vector3.ZERO
-		move_and_slide()
+		_stop_motion()
+		_clear_path()
 		_attack_acc += delta
 		if _attack_acc >= attack_cooldown:
 			_attack_acc = 0.0
 			_target_enemy.take_damage(attack_damage)
 	else:
-		velocity = to_t.normalized() * move_speed
-		move_and_slide()
-	global_position.y = 0.0
+		_move_to_world(delta, tp, attack_range)
+
+
+func configure_barracks_guard(barracks_id: int, guard_home: Vector3) -> void:
+	source_barracks_id = barracks_id
+	set_guard_home(guard_home)
+
+
+func set_guard_home(guard_home: Vector3) -> void:
+	_guard_home = Vector3(guard_home.x, 0.0, guard_home.z)
+	_has_wander_target = false
+	_reset_idle_wander_timer()
+
+
+func _patrol_outside(delta: float) -> void:
+	if _has_wander_target:
+		if global_position.distance_to(_wander_target) <= 0.45:
+			_has_wander_target = false
+			_clear_path()
+			_stop_motion()
+			_reset_idle_wander_timer()
+			return
+		_move_to_world(delta, _wander_target, 0.15)
+		return
+	_stop_motion()
+	_idle_wander_timer -= delta
+	if _idle_wander_timer <= 0.0:
+		_pick_wander_target()
 
 
 func _pick_target() -> void:
@@ -48,14 +86,30 @@ func _pick_target() -> void:
 				_target_enemy = e
 
 
+func _reset_idle_wander_timer() -> void:
+	_idle_wander_timer = randf_range(idle_wander_min_sec, idle_wander_max_sec)
+
+
+func _pick_wander_target() -> void:
+	for i in 10:
+		var offset := Vector3(randf_range(-patrol_radius, patrol_radius), 0.0, randf_range(-patrol_radius, patrol_radius))
+		var candidate := _guard_home + offset
+		if GameState.is_inside_village(candidate):
+			candidate = GameState.get_outside_spawn_from_origin(candidate)
+		_wander_target = candidate
+		_has_wander_target = true
+		return
+	_reset_idle_wander_timer()
+
+
 func _build_barbarian_visual() -> void:
 	for c in mesh_root.get_children():
 		c.free()
 	mesh_root.position = Vector3.ZERO
 	mesh_root.rotation = Vector3.ZERO
-	var body_c := Color(0.2, 0.45, 0.82)
-	var trim_c := Color(0.12, 0.22, 0.45)
-	var skin := Color(0.92, 0.72, 0.55)
+	var body_c := Color(0.22, 0.28, 0.3)
+	var trim_c := Color(0.16, 0.18, 0.16)
+	var skin := Color(0.72, 0.6, 0.48)
 	var body := MeshInstance3D.new()
 	var box := BoxMesh.new()
 	box.size = Vector3(0.42, 0.55, 0.32)

@@ -7,6 +7,8 @@ extends Node3D
 
 
 func _ready() -> void:
+	if get_child_count() > 0:
+		return
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	for i in tree_count:
@@ -63,6 +65,6 @@ func _make_rock(rng: RandomNumberGenerator, pos: Vector3) -> Node3D:
 	r.material_override = m
 	r.position = pos + Vector3(0, box.size.y * 0.45, 0)
 	r.rotation_degrees = Vector3(rng.randf_range(-4, 4), rng.randf() * 360.0, rng.randf_range(-4, 4))
-	var wrap := Node3D.new()
-	wrap.add_child(r)
-	return wrap
+	var rock := Node3D.new()
+	rock.add_child(r)
+	return rock

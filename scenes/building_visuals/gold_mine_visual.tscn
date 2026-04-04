@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_wood"]
+albedo_color = Color(0.45, 0.31, 0.18, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_gold"]
+albedo_color = Color(0.58, 0.42, 0.26, 1)
+roughness = 0.45
+metallic = 0.2
+
+[sub_resource type="StandardMaterial3D" id="mat_dark"]
+albedo_color = Color(0.24, 0.18, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="mesh_body"]
+material = SubResource("mat_wood")
+size = Vector3(2.0, 1.05, 2.0)
+
+[sub_resource type="BoxMesh" id="mesh_top"]
+material = SubResource("mat_gold")
+size = Vector3(2.2, 0.45, 2.2)
+
+[sub_resource type="CylinderMesh" id="mesh_wheel"]
+material = SubResource("mat_gold")
+top_radius = 0.35
+bottom_radius = 0.35
+height = 0.25
+
+[node name="GoldMineVisual" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_body")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+
+[node name="Top" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_top")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+
+[node name="Entrance" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_top")
+material_override = SubResource("mat_dark")
+transform = Transform3D(0.295455, 0, 0, 0, 0.777778, 0, 0, 0, 0.204545, 0, 1.75, 0.95)
+
+[node name="Wheel" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_wheel")
+transform = Transform3D(0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 0, 0, 1, 0.85, 1.15, -0.4)

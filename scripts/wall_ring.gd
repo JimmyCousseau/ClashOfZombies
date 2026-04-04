@@ -5,6 +5,8 @@ var _mat_stone: StandardMaterial3D
 
 
 func _ready() -> void:
+	if get_child_count() > 0:
+		return
 	_mat_stone = StandardMaterial3D.new()
 	_mat_stone.albedo_color = Color(0.58, 0.55, 0.5)
 	_mat_stone.roughness = 0.92

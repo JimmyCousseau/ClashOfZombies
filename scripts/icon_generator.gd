@@ -5,15 +5,17 @@ extends Node
 static func create_gold_icon() -> ImageTexture:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	_draw_circle(img, Vector2(16, 16), 12, Color(0.92, 0.75, 0.2))
-	_draw_circle(img, Vector2(16, 16), 8, Color(0.95, 0.85, 0.3))
+	_draw_box(img, Rect2i(5, 10, 22, 6), Color(0.45, 0.31, 0.18))
+	_draw_box(img, Rect2i(8, 17, 18, 6), Color(0.57, 0.39, 0.22))
+	_draw_line(img, Vector2(7, 9), Vector2(25, 15), Color(0.68, 0.5, 0.32), 1)
 	return ImageTexture.create_from_image(img)
 
 static func create_elixir_icon() -> ImageTexture:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	_draw_box(img, Rect2i(10, 4, 12, 10), Color(0.55, 0.22, 0.85))
-	_draw_circle(img, Vector2(16, 22), 6, Color(0.62, 0.35, 0.95))
+	_draw_box(img, Rect2i(6, 16, 20, 8), Color(0.48, 0.5, 0.52))
+	_draw_box(img, Rect2i(10, 10, 6, 6), Color(0.58, 0.6, 0.62))
+	_draw_box(img, Rect2i(17, 8, 7, 7), Color(0.38, 0.4, 0.42))
 	return ImageTexture.create_from_image(img)
 
 static func create_barracks_icon() -> ImageTexture:
@@ -43,8 +45,8 @@ static func create_farm_icon() -> ImageTexture:
 static func create_storage_icon() -> ImageTexture:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	_draw_box(img, Rect2i(6, 10, 20, 16), Color(0.62, 0.58, 0.52))
-	_draw_box(img, Rect2i(10, 14, 12, 8), Color(0.92, 0.78, 0.22))
+	_draw_box(img, Rect2i(6, 10, 20, 16), Color(0.44, 0.36, 0.24))
+	_draw_box(img, Rect2i(9, 13, 14, 10), Color(0.2, 0.22, 0.18))
 	return ImageTexture.create_from_image(img)
 
 static func create_town_hall_icon() -> ImageTexture:
@@ -58,9 +60,27 @@ static func create_town_hall_icon() -> ImageTexture:
 static func create_barbarian_icon() -> ImageTexture:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	_draw_circle(img, Vector2(16, 8), 4, Color(0.92, 0.72, 0.55))
-	_draw_box(img, Rect2i(12, 12, 8, 10), Color(0.2, 0.45, 0.82))
-	_draw_box(img, Rect2i(10, 22, 12, 6), Color(0.35, 0.35, 0.38))
+	_draw_circle(img, Vector2(16, 8), 4, Color(0.72, 0.6, 0.48))
+	_draw_box(img, Rect2i(11, 12, 10, 10), Color(0.22, 0.28, 0.3))
+	_draw_box(img, Rect2i(10, 22, 12, 6), Color(0.18, 0.2, 0.18))
+	_draw_box(img, Rect2i(20, 12, 3, 12), Color(0.42, 0.44, 0.46))
+	return ImageTexture.create_from_image(img)
+
+static func create_door_icon() -> ImageTexture:
+	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	_draw_box(img, Rect2i(8, 6, 16, 20), Color(0.44, 0.27, 0.14))
+	_draw_box(img, Rect2i(6, 4, 3, 24), Color(0.2, 0.2, 0.22))
+	_draw_box(img, Rect2i(23, 4, 3, 24), Color(0.2, 0.2, 0.22))
+	_draw_circle(img, Vector2(19, 16), 2, Color(0.72, 0.72, 0.68))
+	return ImageTexture.create_from_image(img)
+
+static func create_path_icon() -> ImageTexture:
+	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	_draw_box(img, Rect2i(5, 20, 22, 6), Color(0.66, 0.64, 0.58))
+	_draw_box(img, Rect2i(9, 12, 14, 5), Color(0.76, 0.74, 0.68))
+	_draw_box(img, Rect2i(12, 6, 8, 4), Color(0.86, 0.82, 0.72))
 	return ImageTexture.create_from_image(img)
 
 static func _draw_box(img: Image, rect: Rect2i, color: Color) -> void:

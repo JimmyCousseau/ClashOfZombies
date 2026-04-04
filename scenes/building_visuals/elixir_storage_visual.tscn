@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://yputsvyho0f0"]
+
+[sub_resource type="StandardMaterial3D" id="mat_stone"]
+albedo_color = Color(0.35, 0.36, 0.38, 1)
+
+[sub_resource type="BoxMesh" id="mesh_base"]
+material = SubResource("mat_stone")
+size = Vector3(2.1, 0.95, 2.1)
+
+[sub_resource type="StandardMaterial3D" id="mat_tank"]
+albedo_color = Color(0.24, 0.26, 0.28, 1)
+
+[sub_resource type="CylinderMesh" id="mesh_tank"]
+material = SubResource("mat_tank")
+top_radius = 0.55
+bottom_radius = 0.55
+height = 1.1
+
+[sub_resource type="StandardMaterial3D" id="mat_glow"]
+albedo_color = Color(0.7, 0.34, 0.18, 1)
+
+[node name="ElixirStorageVisual" type="Node3D" unique_id=1256872339]
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=1297547186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("mesh_base")
+
+[node name="LeftTank" type="MeshInstance3D" parent="." unique_id=1075986849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 1.35, 0.2)
+mesh = SubResource("mesh_tank")
+
+[node name="RightGlow" type="MeshInstance3D" parent="." unique_id=45015614]
+transform = Transform3D(0.872727, 0, 0, 0, 0.863636, 0, 0, 0, 0.872727, 0.5, 1.45, -0.25)
+material_override = SubResource("mat_glow")
+mesh = SubResource("mesh_tank")
+
+[node name="TopGlow" type="MeshInstance3D" parent="." unique_id=1255685087]
+transform = Transform3D(0.634633, -0.03685409, 0, 0.04690522, 0.4986399, 0, 0, 0, 0.63636404, -0.039464593, 2.1945329, -4.9591064e-05)
+material_override = SubResource("mat_glow")
+mesh = SubResource("mesh_tank")

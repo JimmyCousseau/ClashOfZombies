@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_wall"]
+albedo_color = Color(0.58, 0.55, 0.5, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="mesh_wall"]
+material = SubResource("mat_wall")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxShape3D" id="shape_wall"]
+size = Vector3(1, 1, 1)
+
+[node name="WallSegment" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 1
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_wall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("shape_wall")

@@ -1,14 +1,19 @@
+@tool
 class_name Zombie
 extends Unit
 
 var _patrol_waypoints: Array[Vector3] = []
 var _patrol_index: int = 0
+var _door_target: VillageBuilding = null
 
 
 func _ready() -> void:
+	if _should_use_generated_visuals():
+		_build_zombie_visual()
+	if Engine.is_editor_hint():
+		return
 	add_to_group("enemies")
 	GameState.register_enemy()
-	_build_zombie_visual()
 	_create_health_bar()
 
 
@@ -29,70 +34,146 @@ func _physics_process(delta: float) -> void:
 	if _target_building:
 		_attack_building(delta)
 	elif _target_enemy:
-		_move_to_target(delta, _target_enemy.global_position)
+		_attack_enemy(delta)
 	else:
 		_patrol(delta)
 
 
 func _patrol(delta: float) -> void:
 	if _patrol_waypoints.is_empty():
-		velocity = Vector3.ZERO
-		move_and_slide()
-		global_position.y = 0.0
+		_stop_motion()
 		return
 	
 	var target_pos: Vector3 = _patrol_waypoints[_patrol_index]
-	_move_to_target(delta, target_pos)
+	_move_to_world(delta, target_pos)
 	
 	var dist: float = global_position.distance_to(target_pos)
 	if dist < 1.0:
 		_patrol_index = (_patrol_index + 1) % _patrol_waypoints.size()
 
 
-func _move_to_target(delta: float, target_pos: Vector3) -> void:
-	var flat: Vector3 = Vector3(target_pos.x, global_position.y, target_pos.z)
-	var to_t: Vector3 = flat - global_position
-	velocity = to_t.normalized() * move_speed
-	move_and_slide()
-	global_position.y = 0.0
-
-
 func _attack_building(delta: float) -> void:
+	if not is_instance_valid(_target_building):
+		_target_building = null
+		return
 	var dist: float = global_position.distance_to(_target_building.global_position)
-	if dist > attack_range + 0.5:
-		_move_to_target(delta, _target_building.global_position)
+	var building_range: float = attack_range + _target_building.get_attack_radius()
+	if dist > building_range:
+		_move_to_world(delta, _target_building.global_position, building_range)
 		return
 	
-	velocity = Vector3.ZERO
-	move_and_slide()
-	global_position.y = 0.0
+	_stop_motion()
+	_clear_path()
 	_attack_acc += delta
 	if _attack_acc >= attack_cooldown:
 		_attack_acc = 0.0
 		_target_building.take_damage(attack_damage)
 
 
+func _attack_enemy(delta: float) -> void:
+	if not is_instance_valid(_target_enemy):
+		_target_enemy = null
+		return
+	var dist: float = global_position.distance_to(_target_enemy.global_position)
+	if dist > attack_range:
+		_move_to_world(delta, _target_enemy.global_position, attack_range)
+		return
+	_stop_motion()
+	_clear_path()
+	_attack_acc += delta
+	if _attack_acc >= attack_cooldown:
+		_attack_acc = 0.0
+		_target_enemy.take_damage(attack_damage)
+
+
 func _check_zombie_target() -> void:
-	# Priority 1: Closest building (including door)
-	var village: Node3D = get_tree().get_first_node_in_group("village")
-	if village:
-		var closest: VillageBuilding = null
-		var closest_dist: float = 999.0
-		for child in village.get_children():
-			if child is VillageBuilding:
-				var b := child as VillageBuilding
-				var d: float = global_position.distance_to(b.global_position)
-				if d < closest_dist:
-					closest = b
-					closest_dist = d
-		
-		if closest and closest_dist < 35.0:
-			_target_building = closest
+	_door_target = _find_door()
+	var closest_enemy: Unit = _find_closest_enemy()
+	var closest_building: VillageBuilding = _find_closest_building()
+	var forced_door: VillageBuilding = _get_forced_door_target(closest_enemy, closest_building)
+	if forced_door:
+		_target_building = forced_door
+		_target_enemy = null
+		return
+	if closest_enemy and closest_building:
+		var enemy_dist: float = global_position.distance_to(closest_enemy.global_position)
+		var building_dist: float = global_position.distance_to(closest_building.global_position) - closest_building.get_attack_radius()
+		if enemy_dist <= building_dist:
+			_target_enemy = closest_enemy
+			_target_building = null
+		else:
+			_target_building = closest_building
 			_target_enemy = null
-			return
-	
+		return
+	if closest_enemy:
+		_target_enemy = closest_enemy
+		_target_building = null
+		return
+	if closest_building:
+		_target_building = closest_building
+		_target_enemy = null
+		return
 	_target_building = null
 	_target_enemy = null
+	_clear_path()
+
+
+func _find_closest_building() -> VillageBuilding:
+	var village: Node3D = get_tree().get_first_node_in_group("village")
+	if village == null:
+		return null
+	var closest: VillageBuilding = null
+	var closest_dist: float = INF
+	for child in village.get_children():
+		if child is VillageBuilding:
+			var b := child as VillageBuilding
+			if b.is_destroyed:
+				continue
+			var d: float = global_position.distance_to(b.global_position) - b.get_attack_radius()
+			if d < closest_dist and d < 35.0:
+				closest = b
+				closest_dist = d
+	return closest
+
+
+func _find_closest_enemy() -> Unit:
+	var allies: Array = get_tree().get_nodes_in_group("allies")
+	var closest: Unit = null
+	var closest_dist: float = INF
+	for ally in allies:
+		if ally is Unit and is_instance_valid(ally):
+			var unit := ally as Unit
+			var d: float = global_position.distance_to(unit.global_position)
+			if d < closest_dist and d < 35.0:
+				closest = unit
+				closest_dist = d
+	return closest
+
+
+func _find_door() -> VillageBuilding:
+	var village: Node3D = get_tree().get_first_node_in_group("village")
+	if village == null:
+		return null
+	for child in village.get_children():
+		if child is VillageBuilding:
+			var b := child as VillageBuilding
+			if b.building_type == VillageBuilding.BuildingType.DOOR and not b.is_destroyed:
+				return b
+	return null
+
+
+func _get_forced_door_target(enemy: Unit, building: VillageBuilding) -> VillageBuilding:
+	if _door_target == null or not is_instance_valid(_door_target):
+		return null
+	if _door_target.is_destroyed:
+		return null
+	if GameState.is_inside_village(global_position):
+		return null
+	var enemy_requires_entry: bool = enemy != null and GameState.is_inside_village(enemy.global_position)
+	var building_requires_entry: bool = building != null and building.building_type != VillageBuilding.BuildingType.DOOR and GameState.is_inside_village(building.global_position)
+	if enemy_requires_entry or building_requires_entry:
+		return _door_target
+	return null
 
 
 func _build_zombie_visual() -> void:
@@ -103,8 +184,8 @@ func _build_zombie_visual() -> void:
 	## Style proche des zombies CoC : peau verte, haillons violets, bras tendus, yeux qui brillent.
 	var skin := Color(0.42, 0.58, 0.38)
 	var skin_dark := Color(0.28, 0.4, 0.26)
-	var rags := Color(0.42, 0.22, 0.62)
-	var rags_dark := Color(0.22, 0.1, 0.32)
+	var rags := Color(0.3, 0.28, 0.26)
+	var rags_dark := Color(0.16, 0.14, 0.12)
 	var bone := Color(0.75, 0.7, 0.62)
 	# Torse voûté
 	var torso := MeshInstance3D.new()

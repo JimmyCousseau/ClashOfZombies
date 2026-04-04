@@ -6,16 +6,19 @@
 [ext_resource type="Script" uid="uid://b7lxbroflqsuq" path="res://scripts/ui/hud_main.gd" id="4_hud"]
 [ext_resource type="Script" uid="uid://dmrld6xqo67wb" path="res://scripts/world_decor.gd" id="5_decor"]
 [ext_resource type="Script" uid="uid://3pyfpdojku7k" path="res://scripts/wall_ring.gd" id="6_wall"]
-[ext_resource type="Script" uid="uid://d1mbvfx7uhp8x" path="res://scripts/ui/resource_display.gd" id="7_resource"]
 [ext_resource type="Script" uid="uid://d301dbf0rw6lj" path="res://scripts/ui/wave_display.gd" id="8_wave"]
 [ext_resource type="Script" uid="uid://t8glklu3afw8" path="res://scripts/ui/building_buttons.gd" id="9_buttons"]
 [ext_resource type="Script" uid="uid://ddg5ecu8by0q4" path="res://scripts/ui/game_overlay.gd" id="10_overlay"]
+[ext_resource type="PackedScene" path="res://scenes/tree.tscn" id="11_tree"]
+[ext_resource type="PackedScene" path="res://scenes/rock.tscn" id="12_rock"]
+[ext_resource type="PackedScene" path="res://scenes/wall_segment.tscn" id="13_wallseg"]
+[ext_resource type="PackedScene" uid="uid://c8building01" path="res://scenes/building.tscn" id="14_building"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
-sky_top_color = Color(0.32, 0.52, 0.92, 1)
-sky_horizon_color = Color(0.68, 0.8, 0.95, 1)
-ground_bottom_color = Color(0.41, 0.58, 0.34, 1)
-ground_horizon_color = Color(0.55, 0.68, 0.42, 1)
+sky_top_color = Color(0.58, 0.7, 0.82, 1)
+sky_horizon_color = Color(0.93, 0.96, 0.98, 1)
+ground_bottom_color = Color(0.42, 0.48, 0.38, 1)
+ground_horizon_color = Color(0.62, 0.69, 0.56, 1)
 
 [sub_resource type="Sky" id="Sky_1"]
 sky_material = SubResource("ProceduralSkyMaterial_1")
@@ -24,17 +27,14 @@ sky_material = SubResource("ProceduralSkyMaterial_1")
 background_mode = 2
 sky = SubResource("Sky_1")
 ambient_light_source = 3
-ambient_light_sky_contribution = 0.48
-ambient_light_energy = 0.62
+ambient_light_sky_contribution = 0.66
+ambient_light_energy = 1.08
 tonemap_mode = 2
-tonemap_white = 1.05
-glow_enabled = true
-glow_intensity = 0.32
-glow_strength = 0.85
+tonemap_white = 1.16
 
 [sub_resource type="StandardMaterial3D" id="Mat_ground"]
 specular_mode = 1
-albedo_color = Color(0.38, 0.66, 0.3, 1)
+albedo_color = Color(0.6, 0.69, 0.5, 1)
 roughness = 0.95
 
 [sub_resource type="BoxMesh" id="BoxMesh_ground"]
@@ -44,16 +44,22 @@ size = Vector3(92, 0.28, 92)
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
 size = Vector3(92, 0.28, 92)
 
+[sub_resource type="LabelSettings" id="LabelSettings_85g3d"]
+
 [node name="Main" type="Node3D" unique_id=568709986]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1027494313]
 environment = SubResource("Environment_1")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1550556856]
-light_color = Color(1, 0.95, 0.85, 1)
-light_energy = 1.28
+transform = Transform3D(0.9507973, -0.029979512, 0.3083597, -0.18148214, 0.7527731, 0.63276917, -0.25109503, -0.6575971, 0.710294, 7.2045736, 14.304276, 13.82409)
+light_color = Color(1, 0.98039216, 0.7058824, 1)
+light_energy = 0.2
 shadow_enabled = true
-directional_shadow_mode = 1
+directional_shadow_mode = 0
+directional_shadow_fade_start = 1.0
+directional_shadow_max_distance = 143.7
+directional_shadow_pancake_size = 19.2
 
 [node name="Ground" type="StaticBody3D" parent="." unique_id=1024004414]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0)
@@ -67,8 +73,53 @@ shape = SubResource("BoxShape3D_ground")
 [node name="WorldDecor" type="Node3D" parent="." unique_id=231734381]
 script = ExtResource("5_decor")
 
+[node name="TreeNorthWest" parent="WorldDecor" unique_id=1035604062 instance=ExtResource("11_tree")]
+transform = Transform3D(1.08, 0, 0, 0, 1.02, 0, 0, 0, 1.08, -21.5, 0, -28)
+
+[node name="TreeNorthEast" parent="WorldDecor" unique_id=1886660772 instance=ExtResource("11_tree")]
+transform = Transform3D(0.92, 0, 0, 0, 0.94, 0, 0, 0, 0.92, 23, 0, -30)
+
+[node name="TreeWest" parent="WorldDecor" unique_id=1930189269 instance=ExtResource("11_tree")]
+transform = Transform3D(1.15, 0, 0, 0, 1.04, 0, 0, 0, 1.15, -35, 0, -6)
+
+[node name="TreeEast" parent="WorldDecor" unique_id=951814016 instance=ExtResource("11_tree")]
+transform = Transform3D(0.96, 0, 0, 0, 1.08, 0, 0, 0, 0.96, 34, 0, 4.5)
+
+[node name="TreeSouthWest" parent="WorldDecor" unique_id=20305890 instance=ExtResource("11_tree")]
+transform = Transform3D(1.02, 0, 0, 0, 0.98, 0, 0, 0, 1.02, -24.5, 0, 29)
+
+[node name="TreeSouthEast" parent="WorldDecor" unique_id=1773501977 instance=ExtResource("11_tree")]
+transform = Transform3D(1.1, 0, 0, 0, 1.06, 0, 0, 0, 1.1, 26.5, 0, 28.5)
+
+[node name="RockNorth" parent="WorldDecor" unique_id=57355139 instance=ExtResource("12_rock")]
+transform = Transform3D(1.2, 0, 0, 0, 1.05, 0, 0, 0, 1.2, 6, 0, -34)
+
+[node name="RockWest" parent="WorldDecor" unique_id=751808664 instance=ExtResource("12_rock")]
+transform = Transform3D(1.05, 0, 0, 0, 1, 0, 0, 0, 1.05, -31, 0, 13)
+
+[node name="RockEast" parent="WorldDecor" unique_id=2075826943 instance=ExtResource("12_rock")]
+transform = Transform3D(0.95, 0, 0, 0, 0.92, 0, 0, 0, 0.95, 31.5, 0, -15)
+
+[node name="RockSouth" parent="WorldDecor" unique_id=511465668 instance=ExtResource("12_rock")]
+transform = Transform3D(1.18, 0, 0, 0, 1.08, 0, 0, 0, 1.18, -3, 0, 35)
+
 [node name="WallRing" type="Node3D" parent="." unique_id=349789860]
 script = ExtResource("6_wall")
+
+[node name="NorthWall" parent="WallRing" unique_id=143144849 instance=ExtResource("13_wallseg")]
+transform = Transform3D(30.3, 0, 0, 0, 1.42, 0, 0, 0, 1.15, 0, 0.69, -14.575)
+
+[node name="SouthWallLeft" parent="WallRing" unique_id=1674358067 instance=ExtResource("13_wallseg")]
+transform = Transform3D(13.25, 0, 0, 0, 1.42, 0, 0, 0, 1.15, -7.375, 0.69, 14.575)
+
+[node name="SouthWallRight" parent="WallRing" unique_id=8382343 instance=ExtResource("13_wallseg")]
+transform = Transform3D(13.25, 0, 0, 0, 1.42, 0, 0, 0, 1.15, 7.375, 0.69, 14.575)
+
+[node name="WestWall" parent="WallRing" unique_id=185278363 instance=ExtResource("13_wallseg")]
+transform = Transform3D(1.15, 0, 0, 0, 1.42, 0, 0, 0, 30.3, -14.575, 0.69, 0)
+
+[node name="EastWall" parent="WallRing" unique_id=332687155 instance=ExtResource("13_wallseg")]
+transform = Transform3D(1.15, 0, 0, 0, 1.42, 0, 0, 0, 30.3, 14.575, 0.69, 0)
 
 [node name="CameraRig" type="Node3D" parent="." unique_id=1926364144]
 script = ExtResource("1_cam")
@@ -80,6 +131,17 @@ far = 450.0
 
 [node name="Village" type="Node3D" parent="." unique_id=64260844 groups=["village"]]
 script = ExtResource("2_vil")
+
+[node name="StarterTownHall" parent="Village" unique_id=1228872670 instance=ExtResource("14_building")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+building_type = 0
+
+[node name="StarterDoor" parent="Village" unique_id=1207115054 instance=ExtResource("14_building")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 14.575)
+building_type = 8
+
+[node name="HeroStart" type="Marker3D" parent="Village" unique_id=2143782190]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 3)
 
 [node name="ProductionTimer" type="Timer" parent="Village" unique_id=999896694]
 autostart = true
@@ -102,6 +164,7 @@ mouse_filter = 2
 script = ExtResource("4_hud")
 
 [node name="TopBar" type="PanelContainer" parent="UI/HUD" unique_id=961711168]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -119,57 +182,15 @@ theme_override_constants/margin_bottom = 8
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="GoldBlock" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=1503409404]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="GoldIcon" type="ColorRect" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/GoldBlock" unique_id=1062308712]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-color = Color(0.95, 0.78, 0.15, 1)
-
-[node name="GoldLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/GoldBlock" unique_id=1208257867]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.98, 0.92, 0.55, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.1, 0.02, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 22
-text = "0 / 0"
-
-[node name="SpacerL" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=88818617]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="WaveLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=603985561]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 1, 1)
 theme_override_colors/font_outline_color = Color(0.05, 0.05, 0.12, 1)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 20
-text = "Horde —"
+text = "Nuit —"
 
 [node name="SpacerR" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=347433422]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ElixirBlock" type="HBoxContainer" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=1317040481]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="ElixirIcon" type="ColorRect" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/ElixirBlock" unique_id=818955153]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-color = Color(0.62, 0.28, 0.95, 1)
-
-[node name="ElixirLabel" type="Label" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer/ElixirBlock" unique_id=476665428]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.65, 1, 1)
-theme_override_colors/font_outline_color = Color(0.12, 0.04, 0.2, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 22
-text = "0 / 0"
-
-[node name="SpacerEnd" type="Control" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=698318921]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -178,17 +199,254 @@ custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
 text = "Menu"
 
-[node name="BottomDock" type="Control" parent="UI/HUD" unique_id=1055675769]
+[node name="BtnInventory" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=662490055]
+custom_minimum_size = Vector2(72, 40)
+layout_mode = 2
+text = "Sac"
+
+[node name="BtnTest" type="Button" parent="UI/HUD/TopBar/MarginContainer/HBoxContainer" unique_id=1356600240]
+custom_minimum_size = Vector2(78, 40)
+layout_mode = 2
+text = "Tests"
+
+[node name="TestDock" type="Control" parent="UI/HUD" unique_id=1315575074]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 0
+offset_left = 50.0
+offset_top = 100.0
+offset_right = 409.0
+offset_bottom = 438.0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/HUD/TestDock" unique_id=1476381982]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -232.0
-offset_right = -10.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/TestDock/PanelContainer" unique_id=1423560348]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/TestDock/PanelContainer/MarginContainer" unique_id=1381424829]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TestTitle" type="Label" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox" unique_id=476451878]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Panneau test"
+
+[node name="TestStatus" type="Label" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox" unique_id=363807007]
+layout_mode = 2
+text = "Etat"
+autowrap_mode = 3
+
+[node name="TestActions" type="GridContainer" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox" unique_id=1129203410]
+layout_mode = 2
+columns = 2
+
+[node name="BtnTestResources" type="Button" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox/TestActions" unique_id=1837192901]
+layout_mode = 2
+text = "Reserve +"
+
+[node name="BtnTestWave" type="Button" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox/TestActions" unique_id=585777975]
+layout_mode = 2
+text = "Lancer vague"
+
+[node name="BtnTestHorde" type="Button" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox/TestActions" unique_id=1740598292]
+layout_mode = 2
+text = "Horde x12"
+
+[node name="BtnTestClear" type="Button" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox/TestActions" unique_id=1072525102]
+layout_mode = 2
+text = "Nettoyer"
+
+[node name="BtnTestDoor" type="Button" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox/TestActions" unique_id=591235573]
+layout_mode = 2
+text = "Porte -250"
+
+[node name="TestFeedback" type="Label" parent="UI/HUD/TestDock/PanelContainer/MarginContainer/VBox" unique_id=487494507]
+layout_mode = 2
+text = "Actions de test"
+autowrap_mode = 3
+
+[node name="DoorDock" type="Control" parent="UI/HUD" unique_id=1320177696]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -401.0
+offset_top = 78.0
+offset_right = -12.0
+offset_bottom = 230.0
+grow_horizontal = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/HUD/DoorDock" unique_id=762785008]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/DoorDock/PanelContainer" unique_id=1587322207]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer" unique_id=1806476146]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DoorTitle" type="Label" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer/VBox" unique_id=1075006152]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Porte du village"
+
+[node name="HeroStatus" type="Label" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer/VBox" unique_id=462962385]
+layout_mode = 2
+text = "Hero : Au village"
+
+[node name="HeroFocus" type="Label" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer/VBox" unique_id=1351912518]
+layout_mode = 2
+text = "Mission : Bois"
+
+[node name="HBox" type="HBoxContainer" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer/VBox" unique_id=411039536]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnDoorAction" type="Button" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=1542035467]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Envoyer dehors"
+
+[node name="BtnDoorFocus" type="Button" parent="UI/HUD/DoorDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=1098510709]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Changer mission"
+
+[node name="BuildingDock" type="Control" parent="UI/HUD" unique_id=726084486]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -599.0
+offset_top = 244.0
+offset_right = -12.0
+offset_bottom = 455.0
+grow_horizontal = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/HUD/BuildingDock" unique_id=653264794]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/BuildingDock/PanelContainer" unique_id=1866421567]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer" unique_id=2127811008]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BuildingTitle" type="Label" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox" unique_id=450627533]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Batiment"
+
+[node name="BuildingStatus" type="Label" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox" unique_id=419405211]
+layout_mode = 2
+text = "PV : 0 / 0"
+
+[node name="BuildingDetail" type="Label" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox" unique_id=2014541648]
+layout_mode = 2
+text = "Details"
+autowrap_mode = 3
+
+[node name="HBox" type="HBoxContainer" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox" unique_id=386789675]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnBuildingAction" type="Button" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=1655025346]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Action"
+
+[node name="BtnBuildingUpgrade" type="Button" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=423837453]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ameliorer"
+
+[node name="BtnBuildingDestroy" type="Button" parent="UI/HUD/BuildingDock/PanelContainer/MarginContainer/VBox/HBox" unique_id=1351985147]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Detruire"
+
+[node name="InventoryDock" type="Control" parent="UI/HUD" unique_id=1333838733]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 50.0
+offset_top = 100.0
+offset_right = 409.0
+offset_bottom = 503.0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/HUD/InventoryDock" unique_id=1173940109]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HUD/InventoryDock/PanelContainer" unique_id=2035590629]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/InventoryDock/PanelContainer/MarginContainer" unique_id=1011487351]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="InventoryTitle" type="Label" parent="UI/HUD/InventoryDock/PanelContainer/MarginContainer/VBox" unique_id=202364695]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Inventaire"
+
+[node name="InventoryBody" type="Label" parent="UI/HUD/InventoryDock/PanelContainer/MarginContainer/VBox" unique_id=2059803164]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Ressources"
+label_settings = SubResource("LabelSettings_85g3d")
+autowrap_mode = 3
+
+[node name="BottomDock" type="Control" parent="UI/HUD" unique_id=1055675769]
+visible = false
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -593.0
+offset_top = 78.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 0
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="UI/HUD/BottomDock" unique_id=88976082]
@@ -217,56 +475,19 @@ theme_override_colors/font_color = Color(0.98, 0.94, 0.88, 1)
 theme_override_font_sizes/font_size = 17
 text = "Construction"
 
-[node name="BuildGrid" type="GridContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=80334007]
+[node name="BuildScroll" type="ScrollContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=2142086154]
 layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="BtnGoldMine" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1545767895]
+[node name="BuildList" type="VBoxContainer" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildScroll" unique_id=796837985]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Mine (150 or)"
+theme_override_constants/separation = 10
 
-[node name="BtnElixir" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=248332924]
+[node name="BtnMissionFocus" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=142552313]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Élexir (150 él.)"
-
-[node name="BtnFarm" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1611397541]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Ferme (or+él.)"
-
-[node name="BtnGoldStorage" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1581339738]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Entrepôt or"
-
-[node name="BtnElixirStorage" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=435826558]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Réservoir él."
-
-[node name="BtnCannon" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1076711097]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Canon"
-
-[node name="BtnBarracks" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=1777853122]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Caserne"
-
-[node name="BtnTownHall" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=373181132]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "HDV (500 él.)"
-
-[node name="BtnTrain" type="Button" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox/BuildGrid" unique_id=131861853]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Barbare (50 él.)"
+text = "Mission : Bois"
 
 [node name="HSeparator" type="HSeparator" parent="UI/HUD/BottomDock/PanelContainer/MarginContainer/VBox" unique_id=224278821]
 layout_mode = 2
@@ -303,9 +524,6 @@ theme_override_colors/font_outline_color = Color(0.2, 0.05, 0.02, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
 text = "Défaite"
-
-[node name="ResourceDisplay" type="Node" parent="UI/HUD" unique_id=1111111111]
-script = ExtResource("7_resource")
 
 [node name="WaveDisplay" type="Node" parent="UI/HUD" unique_id=-2072745074]
 script = ExtResource("8_wave")

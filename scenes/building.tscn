@@ -12,6 +12,8 @@ script = ExtResource("1_script")
 
 [node name="MeshRoot" type="Node3D" parent="."]
 
+[node name="VisualContainer" type="Node3D" parent="MeshRoot"]
+
 [node name="Label3D" type="Label3D" parent="MeshRoot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 text = "B"

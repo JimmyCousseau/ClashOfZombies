@@ -12,4 +12,4 @@ func _ready() -> void:
 
 func _on_game_over() -> void:
 	overlay.visible = true
-	overlay_label.text = "Village détruit !"
+	overlay_label.text = "Refuge perdu"

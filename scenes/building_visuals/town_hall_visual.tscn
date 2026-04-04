@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_stone"]
+albedo_color = Color(0.62, 0.6, 0.54, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_trim"]
+albedo_color = Color(0.34, 0.38, 0.4, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_roof"]
+albedo_color = Color(0.34, 0.24, 0.18, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_metal"]
+albedo_color = Color(0.58, 0.58, 0.54, 1)
+roughness = 0.5
+metallic = 0.2
+
+[sub_resource type="BoxMesh" id="mesh_base"]
+material = SubResource("mat_stone")
+size = Vector3(2.8, 0.35, 2.8)
+
+[sub_resource type="BoxMesh" id="mesh_hall"]
+material = SubResource("mat_stone")
+size = Vector3(2.35, 1.5, 2.35)
+
+[sub_resource type="BoxMesh" id="mesh_roof"]
+material = SubResource("mat_roof")
+size = Vector3(2.55, 0.45, 2.55)
+
+[sub_resource type="BoxMesh" id="mesh_tower"]
+material = SubResource("mat_stone")
+size = Vector3(1.15, 1.1, 1.15)
+
+[sub_resource type="CylinderMesh" id="mesh_spire"]
+material = SubResource("mat_metal")
+top_radius = 0.12
+bottom_radius = 0.12
+height = 0.9
+
+[node name="TownHallVisual" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_base")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+
+[node name="Hall" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_hall")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0)
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_roof")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.95, 0)
+
+[node name="Tower" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_tower")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
+
+[node name="TowerRoof" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_roof")
+scale = Vector3(0.53, 0.78, 0.53)
+transform = Transform3D(0.53, 0, 0, 0, 0.78, 0, 0, 0, 0.53, 0, 3.35, 0)
+
+[node name="Spire" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_spire")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
+
+[node name="LeftTrim" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_hall")
+material_override = SubResource("mat_trim")
+transform = Transform3D(0.234043, 0, 0, 0, 0.566667, 0, 0, 0, 0.148936, -0.75, 0.95, 1.22)
+
+[node name="RightTrim" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_hall")
+material_override = SubResource("mat_trim")
+transform = Transform3D(0.234043, 0, 0, 0, 0.566667, 0, 0, 0, 0.148936, 0.75, 0.95, 1.22)

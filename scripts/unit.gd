@@ -4,8 +4,9 @@ extends CharacterBody3D
 enum Allegiance { PLAYER, ENEMY }
 
 @export var allegiance: Allegiance = Allegiance.ENEMY
+@export var use_generated_visuals: bool = false
 @export var move_speed: float = 4.5
-@export var attack_range: float = 0.8
+@export var attack_range: float = 0.0
 @export var attack_damage: int = 18
 @export var attack_cooldown: float = 0.85
 
@@ -14,6 +15,12 @@ var max_hp: int = 90
 var _target_enemy: Unit = null
 var _target_building: VillageBuilding = null
 var _attack_acc: float = 0.0
+var _path: Array[Vector3] = []
+var _path_index: int = 0
+var _path_refresh_timer: float = 0.0
+var _path_goal: Vector3 = Vector3.ZERO
+var _path_stop_distance: float = -1.0
+var _has_path_goal: bool = false
 
 @onready var mesh_root: Node3D = $MeshRoot
 
@@ -70,8 +77,64 @@ func _mat(c: Color, roughness: float = 0.8, metallic: float = 0.05) -> StandardM
 	return m
 
 
+func _should_use_generated_visuals() -> bool:
+	return use_generated_visuals or mesh_root == null or mesh_root.get_child_count() == 0
+
+
 func _pick_target() -> void:
 	pass
+
+
+func _move_to_world(delta: float, target_pos: Vector3, stop_distance: float = 0.0) -> void:
+	if global_position.distance_to(target_pos) <= stop_distance:
+		_stop_motion()
+		_clear_path()
+		return
+	_path_refresh_timer -= delta
+	var goal_changed: bool = not _has_path_goal or _path_goal.distance_to(target_pos) > 1.25
+	var stop_changed: bool = absf(_path_stop_distance - stop_distance) > 0.1
+	if goal_changed or stop_changed or _path_refresh_timer <= 0.0 or _path_index >= _path.size():
+		_rebuild_path(target_pos, stop_distance)
+	var waypoint: Vector3 = target_pos
+	if _path_index < _path.size():
+		waypoint = _path[_path_index]
+		if global_position.distance_to(waypoint) <= 0.45:
+			_path_index += 1
+			if _path_index < _path.size():
+				waypoint = _path[_path_index]
+			else:
+				waypoint = target_pos
+	var flat: Vector3 = Vector3(waypoint.x, global_position.y, waypoint.z)
+	var to_t: Vector3 = flat - global_position
+	if to_t.length_squared() <= 0.0001:
+		_stop_motion()
+		return
+	velocity = to_t.normalized() * move_speed
+	move_and_slide()
+	global_position.y = 0.0
+
+
+func _rebuild_path(target_pos: Vector3, stop_distance: float) -> void:
+	_path_goal = target_pos
+	_path_stop_distance = stop_distance
+	_has_path_goal = true
+	_path_refresh_timer = 0.35
+	_path = GameState.find_path(global_position, target_pos, stop_distance)
+	_path_index = 0
+
+
+func _stop_motion() -> void:
+	velocity = Vector3.ZERO
+	move_and_slide()
+	global_position.y = 0.0
+
+
+func _clear_path() -> void:
+	_path.clear()
+	_path_index = 0
+	_path_goal = Vector3.ZERO
+	_path_stop_distance = -1.0
+	_has_path_goal = false
 
 
 func _on_death() -> void:

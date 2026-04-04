@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_wall"]
+albedo_color = Color(0.48, 0.36, 0.24, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_roof"]
+albedo_color = Color(0.28, 0.22, 0.18, 1)
+
+[sub_resource type="StandardMaterial3D" id="mat_door"]
+albedo_color = Color(0.35, 0.22, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="mesh_main"]
+material = SubResource("mat_wall")
+size = Vector3(3.0, 1.45, 2.1)
+
+[sub_resource type="BoxMesh" id="mesh_roof"]
+material = SubResource("mat_roof")
+size = Vector3(3.15, 0.4, 2.25)
+
+[node name="BarracksVisual" type="Node3D"]
+
+[node name="Main" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_main")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_roof")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
+
+[node name="Door" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_main")
+material_override = SubResource("mat_door")
+transform = Transform3D(0.283333, 0, 0, 0, 0.758621, 0, 0, 0, 0.0952381, 0, 0.75, 1.08)

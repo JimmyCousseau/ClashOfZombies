@@ -21,14 +21,15 @@ func _process(delta: float) -> void:
 	
 	var origin: Vector3 = _building.global_position + Vector3(0, 1.0, 0)
 	var best: Unit = null
-	var best_d2: float = RANGE * RANGE
+	var range_value: float = _building.get_cannon_range()
+	var best_d2: float = range_value * range_value
 	
 	for n in get_tree().get_nodes_in_group("enemies"):
 		var e := n as Unit
 		if e == null or not is_instance_valid(e):
 			continue
 		var d2: float = origin.distance_squared_to(e.global_position)
-		if d2 <= RANGE * RANGE and d2 < best_d2:
+		if d2 <= range_value * range_value and d2 < best_d2:
 			best_d2 = d2
 			best = e
 	
@@ -38,7 +39,7 @@ func _process(delta: float) -> void:
 		_aim_at_target(delta)
 	
 	_acc += delta
-	if _acc < COOLDOWN or not _target:
+	if _acc < _building.get_cannon_cooldown() or not _target:
 		return
 	
 	_acc = 0.0
@@ -82,7 +83,7 @@ func _fire_bullet(origin: Vector3, target: Unit) -> void:
 	bullet.set_script(bullet_script)
 	bullet.global_position = _building.cannon_barrel.global_position
 	if bullet.has_method("setup"):
-		bullet.call("setup", target, DAMAGE)
+		bullet.call("setup", target, _building.get_cannon_damage())
 	if _building and _building.get_parent():
 		_building.get_parent().add_child(bullet)
 	else:
