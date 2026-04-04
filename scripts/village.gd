@@ -30,6 +30,8 @@ var _buildings: Array[VillageBuilding] = []
 var _touch_tap_candidates: Dictionary = {}
 var _hero: Node = null
 var _selected_building: VillageBuilding = null
+var _grid_preview_root: Node3D = null
+var _grid_preview_cells: Dictionary = {} # Vector2i -> MeshInstance3D
 
 @onready var camera_rig: Node3D = $"../CameraRig"
 @onready var hud: Control = $"../UI/HUD"
@@ -132,10 +134,12 @@ func _get_editor_preview_building_position(index: int) -> Vector3:
 
 func set_build_mode(t: int) -> void:
 	_build_mode = t
+	_show_grid_preview(t)
 
 
 func clear_build_mode() -> void:
 	_build_mode = -1
+	_hide_grid_preview()
 
 
 func notify_building_removed(c: Vector2i, b: VillageBuilding) -> void:
@@ -372,6 +376,11 @@ func _try_place_at_world(hit: Vector3) -> bool:
 	var cell := _world_to_cell(hit)
 	if cell.x < 0 or cell.y < 0 or cell.x >= GameState.GRID_SIZE.x or cell.y >= GameState.GRID_SIZE.y:
 		return false
+	
+	if _build_mode == VillageBuilding.BuildingType.GUARD_TOWER:
+		if not _is_valid_guard_tower_cell(cell):
+			return false
+	
 	return _spawn_building_at_cell(_build_mode, cell, false)
 
 
@@ -668,3 +677,96 @@ func repair_all() -> void:
 		if GameState.can_afford(repair_cost):
 			building.repair(missing_hp)
 			GameState.spend(repair_cost)
+
+
+func _show_grid_preview(building_type: int) -> void:
+_hide_grid_preview()
+_grid_preview_root = Node3D.new()
+_grid_preview_root.name = "_GridPreview"
+add_child(_grid_preview_root)
+
+var allowed_cells: Array[Vector2i] = _get_allowed_cells_for_building(building_type)
+var checkerboard_offset: int = 0
+
+for cell in allowed_cells:
+if _can_place_at_cell(building_type, cell):
+if (cell.x + cell.y + checkerboard_offset) % 2 == 0:
+_create_grid_cell_visual(cell)
+
+
+func _hide_grid_preview() -> void:
+if _grid_preview_root and is_instance_valid(_grid_preview_root):
+_grid_preview_root.queue_free()
+_grid_preview_root = null
+_grid_preview_cells.clear()
+
+
+func _get_allowed_cells_for_building(building_type: int) -> Array[Vector2i]:
+var cells: Array[Vector2i] = []
+
+if building_type == VillageBuilding.BuildingType.GUARD_TOWER:
+cells = _get_guard_tower_placement_cells()
+else:
+for x in range(GameState.GRID_SIZE.x):
+for y in range(GameState.GRID_SIZE.y):
+cells.append(Vector2i(x, y))
+
+return cells
+
+
+func _get_guard_tower_placement_cells() -> Array[Vector2i]:
+var cells: Array[Vector2i] = []
+
+var corner_positions: Array[Vector3] = [
+Vector3(-14.575, 0, -14.575),
+Vector3(14.575, 0, -14.575),
+Vector3(-14.575, 0, 14.575),
+Vector3(14.575, 0, 14.575),
+Vector3(-1.5, 0, 14.575),
+Vector3(1.5, 0, 14.575),
+]
+
+for pos in corner_positions:
+cells.append(_world_to_cell(pos))
+
+return cells
+
+
+func _can_place_at_cell(building_type: int, cell: Vector2i) -> bool:
+if cell.x < 0 or cell.y < 0 or cell.x >= GameState.GRID_SIZE.x or cell.y >= GameState.GRID_SIZE.y:
+return false
+
+if building_type == VillageBuilding.BuildingType.GUARD_TOWER:
+return _is_valid_guard_tower_cell(cell)
+
+if _grid.has(cell):
+var existing := _grid.get(cell, null) as VillageBuilding
+if existing and is_instance_valid(existing):
+if existing.building_type == VillageBuilding.BuildingType.PATH:
+return true
+return false
+
+return true
+
+
+func _is_valid_guard_tower_cell(cell: Vector2i) -> bool:
+var allowed: Array[Vector2i] = _get_guard_tower_placement_cells()
+return cell in allowed
+
+
+func _create_grid_cell_visual(cell: Vector2i) -> void:
+var world_pos: Vector3 = _cell_to_world(cell)
+
+var mesh_instance := MeshInstance3D.new()
+var box_mesh := BoxMesh.new()
+box_mesh.size = Vector3(GameState.CELL_SIZE - 0.1, 0.05, GameState.CELL_SIZE - 0.1)
+mesh_instance.mesh = box_mesh
+
+var mat := StandardMaterial3D.new()
+mat.albedo_color = Color(0.2, 0.8, 0.2, 0.3)
+mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+mesh_instance.material_override = mat
+
+mesh_instance.position = world_pos + Vector3(0, 0.1, 0)
+_grid_preview_root.add_child(mesh_instance)
+_grid_preview_cells[cell] = mesh_instance

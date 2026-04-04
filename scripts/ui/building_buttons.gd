@@ -47,6 +47,16 @@ const BUILD_CARDS: Array[Dictionary] = [
 		"title": "Chemin",
 		"description": "Structure les allees du village et fusionne avec les routes voisines.",
 	},
+	{
+		"type": VillageBuilding.BuildingType.GUARD_TOWER,
+		"title": "Tour d'Archer",
+		"description": "Tour de defense tirable depuis les coins et pres de la porte.",
+	},
+	{
+		"type": VillageBuilding.BuildingType.WORKSHOP,
+		"title": "Atelier",
+		"description": "Fabrique les ressources necessaires pour les tours (boulets, fleches).",
+	},
 ]
 
 @onready var mode_label: Label = $"../MarginContainer/VBox/ModeLabel"
@@ -120,6 +130,10 @@ func _get_card_icon(building_type: int) -> Texture2D:
 			return IconGenerator.create_town_hall_icon()
 		VillageBuilding.BuildingType.PATH:
 			return IconGenerator.create_path_icon()
+		VillageBuilding.BuildingType.GUARD_TOWER:
+			return IconGenerator.create_cannon_icon()
+		VillageBuilding.BuildingType.WORKSHOP:
+			return IconGenerator.create_storage_icon()
 	return null
 
 
