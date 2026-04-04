@@ -2,6 +2,115 @@
 
 [ext_resource type="Script" uid="uid://b0dwo72koll0b" path="res://scripts/barbarian.gd" id="1_script"]
 
+[sub_resource type="Animation" id="Animation_vce3p"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/RightArm:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.25151408, 0.3698309, 0.02)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0.39859825)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/LeftArm:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.2751376, 0.32, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/LeftArm:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -0.28646088)]
+}
+
+[sub_resource type="Animation" id="Animation_omgms"]
+resource_name = "walking"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/RightArm:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.22591072, 0.36983088, 0.09935557), Vector3(0.22591072, 0.36983088, 0.01968425), Vector3(0.22591072, 0.36983088, -0.08069984)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(-0.66383195, -0.0001655048, 0.342675), Vector3(0.0027616634, -0.00014017624, 0.3425683), Vector3(0.54039294, -0.00016348329, 0.34248453)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/LeftArm:position")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(-0.22863889, 0.38304514, -0.064971715), Vector3(-0.22863889, 0.38304514, 0), Vector3(-0.22863889, 0.38304514, 0.09306127)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/LeftArm:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.3811799, -1.16467005e-08, -0.3490658), Vector3(0, 0, -0.3490658), Vector3(-0.7102095, -1.5072768e-08, -0.34906584)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_imun0"]
+_data = {
+&"RESET": SubResource("Animation_vce3p"),
+&"walking": SubResource("Animation_omgms")
+}
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
 albedo_color = Color(0.22, 0.28, 0.3, 1)
 
@@ -32,54 +141,12 @@ size = Vector3(0.1, 0.38, 0.1)
 radius = 0.38
 height = 0.95
 
-[sub_resource type="Animation" id="Animation_arm_idle"]
-length = 1.0
-loop_mode = 1
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeshRoot/LeftArm")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, -0.24, 0.32, 0)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("MeshRoot/RightArm")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0.32, 0.45, 0.02)
-
-[sub_resource type="Animation" id="Animation_arm_swing_moving"]
-length = 1.0
-loop_mode = 1
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeshRoot/LeftArm")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, -0.24, 0.32, 0, 0.25, 1, -0.24, 0.32, 0, 0.5, 1, -0.24, 0.32, 0, 0.75, 1, -0.24, 0.32, 0, 1, 1, -0.24, 0.32, 0)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("MeshRoot/RightArm")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0.32, 0.45, 0.02, 0.25, 1, 0.32, 0.45, 0.02, 0.5, 1, 0.32, 0.45, 0.02, 0.75, 1, 0.32, 0.45, 0.02, 1, 1, 0.32, 0.45, 0.02)
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_barbarian"]
-_animations = {
-"arm_idle": SubResource("Animation_arm_idle"),
-"arm_swing_moving": SubResource("Animation_arm_swing_moving")
-}
-
 [node name="Barbarian" type="CharacterBody3D" unique_id=1120409126]
 collision_layer = 2
 script = ExtResource("1_script")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anim_library = SubResource("AnimationLibrary_barbarian")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=704907578]
+libraries/ = SubResource("AnimationLibrary_imun0")
 
 [node name="MeshRoot" type="Node3D" parent="." unique_id=472494346]
 
@@ -96,13 +163,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.96707475, 0)
 mesh = SubResource("BoxMesh_band")
 
 [node name="LeftArm" type="MeshInstance3D" parent="MeshRoot" unique_id=711585273]
-transform = Transform3D(0.9718118, 0.23575856, 0, -0.23575856, 0.9718118, 0, 0, 0, 1, -0.24, 0.32, 0)
+transform = Transform3D(0.9592499, 0.28255913, 0, -0.2825591, 0.95925003, 0, 0, 0, 1, -0.2751376, 0.32, 0)
 mesh = SubResource("BoxMesh_limb")
 
 [node name="RightArm" type="MeshInstance3D" parent="MeshRoot" unique_id=717132857]
-transform = Transform3D(0.21798423, -0.9759525, 0, 0.9759525, 0.21798423, 0, 0, 0, 1, 0.32, 0.45, 0.02)
+transform = Transform3D(0.92160594, -0.38812697, 0, 0.38812688, 0.9216062, 0, 0, 0, 1.0000004, 0.25151408, 0.3698309, 0.02)
 mesh = SubResource("BoxMesh_limb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=850453328]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+visible = false
 shape = SubResource("CapsuleShape3D_1")

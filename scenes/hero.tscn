@@ -2,6 +2,168 @@
 
 [ext_resource type="Script" uid="uid://vpnffnt6w5a6" path="res://scripts/hero.gd" id="1_script"]
 
+[sub_resource type="Animation" id="Animation_3uyx6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/Tool:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -0.31415913)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0.71370006)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/Tool:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.42836988, 0.38, 0.06)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/RightArm:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.33289334, 0.46017873, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/LeftArm:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.25275302, 0.44550103, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/LeftArm:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -0.32885495)]
+}
+
+[sub_resource type="Animation" id="Animation_yvbpl"]
+resource_name = "walk_arms"
+loop_mode = 2
+markers = [{
+"color": Color(1, 1, 1, 1),
+"name": &"Mid",
+"time": 0.5
+}]
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshRoot/Tool:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.059164315, -0.066746034, 0.042640876), Vector3(0.0019661116, 0.00072757225, 0.00028523852), Vector3(0.8743142, 0.03974536, -0.19170544)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshRoot/RightArm:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(-1.0826626, 1.1836298e-07, 0.71369994), Vector3(0, 0, 0.71370006), Vector3(1.0540218, -3.948696e-08, 0.71370006)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshRoot/Tool:position")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.39261234, 0.43902355, 0.23596817), Vector3(0.42836988, 0.38, 0.06), Vector3(0.42836988, 0.4403996, -0.12566073)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MeshRoot/RightArm:position")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.33289334, 0.46017873, 0.09527357), Vector3(0.33289334, 0.41661346, 0), Vector3(0.33289334, 0.46017873, -0.11112191)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("MeshRoot/LeftArm:position")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(-0.25275302, 0.44550103, -0.10595927), Vector3(-0.25275302, 0.43864036, -0.00022010627), Vector3(-0.25275302, 0.44550103, 0.1010814)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("MeshRoot/LeftArm:rotation")
+tracks/5/interp = 2
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.8767661, 2.7795264e-09, -0.32885492), Vector3(0, 0, -0.32885495), Vector3(-0.73129296, 0, -0.328855)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hero"]
+_data = {
+&"RESET": SubResource("Animation_3uyx6"),
+&"walk_arms": SubResource("Animation_yvbpl")
+}
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jacket"]
 albedo_color = Color(0.18, 0.24, 0.28, 1)
 
@@ -41,82 +203,13 @@ size = Vector3(0.1, 0.56, 0.1)
 radius = 0.38
 height = 0.95
 
-[sub_resource type="Animation" id="Animation_arm_idle"]
-length = 1.0
-loop_mode = 1
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeshRoot/LeftArm")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, -0.28, 0.38, 0)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("MeshRoot/RightArm")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0.3769005, 0.5368783, 0.02)
-tracks/2/type = "rotation_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("MeshRoot/LeftArm")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0)
-tracks/3/type = "rotation_3d"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("MeshRoot/RightArm")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = PackedFloat32Array(0, 1, 0, 0, 0)
-
-[sub_resource type="Animation" id="Animation_arm_swing_moving"]
-length = 1.0
-loop_mode = 1
-tracks/0/type = "position_3d"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeshRoot/LeftArm")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0, 1, -0.28, 0.38, 0, 0.25, 1, -0.28, 0.38, 0, 0.5, 1, -0.28, 0.38, 0, 0.75, 1, -0.28, 0.38, 0, 1, 1, -0.28, 0.38, 0)
-tracks/1/type = "position_3d"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("MeshRoot/RightArm")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0.3769005, 0.5368783, 0.02, 0.25, 1, 0.3769005, 0.5368783, 0.02, 0.5, 1, 0.3769005, 0.5368783, 0.02, 0.75, 1, 0.3769005, 0.5368783, 0.02, 1, 1, 0.3769005, 0.5368783, 0.02)
-tracks/2/type = "rotation_3d"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("MeshRoot/LeftArm")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = PackedFloat32Array(0, 1, 0.38268346, 0, 0, 0.25, 1, 0.30901699, 0, 0, 0.5, 1, 0, 0, 0, 0.75, 1, -0.30901699, 0, 0, 1, 1, -0.38268346, 0, 0)
-tracks/3/type = "rotation_3d"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("MeshRoot/RightArm")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = PackedFloat32Array(0, 1, -0.38268346, 0, 0, 0.25, 1, -0.30901699, 0, 0, 0.5, 1, 0, 0, 0, 0.75, 1, 0.30901699, 0, 0, 1, 1, 0.38268346, 0, 0)
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_hero"]
-_animations = {
-"arm_idle": SubResource("Animation_arm_idle"),
-"arm_swing_moving": SubResource("Animation_arm_swing_moving")
-}
-
 [node name="Hero" type="CharacterBody3D" unique_id=252699452]
 collision_layer = 2
 script = ExtResource("1_script")
+arm_swing_speed = 1.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anim_library = SubResource("AnimationLibrary_hero")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1005580185]
+libraries/ = SubResource("AnimationLibrary_hero")
 
 [node name="MeshRoot" type="Node3D" parent="." unique_id=42267791]
 
@@ -133,15 +226,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, -0.2)
 mesh = SubResource("BoxMesh_backpack")
 
 [node name="LeftArm" type="MeshInstance3D" parent="MeshRoot" unique_id=711585273]
-transform = Transform3D(0.9718118, 0.23575856, 0, -0.23575856, 0.9718118, 0, 0, 0, 1, -0.28, 0.38, 0)
+transform = Transform3D(0.9464125, 0.32295945, 0, -0.32295945, 0.94641244, 0, 0, 0, 0.9999999, -0.25275302, 0.44550103, 0)
 mesh = SubResource("BoxMesh_limb")
 
 [node name="RightArm" type="MeshInstance3D" parent="MeshRoot" unique_id=717132857]
-transform = Transform3D(0.21798423, -0.9759525, 0, 0.9759525, 0.21798423, 0, 0, 0, 1, 0.3769005, 0.5368783, 0.02)
+transform = Transform3D(0.75594485, -0.6546353, 0, 0.6546353, 0.75594485, 0, 0, 0, 0.9999999, 0.33289334, 0.46017873, 0)
 mesh = SubResource("BoxMesh_limb")
 
 [node name="Tool" type="MeshInstance3D" parent="MeshRoot" unique_id=903933962]
-transform = Transform3D(0.951057, 0.309017, 0, -0.309017, 0.951057, 0, 0, 0, 1, 0.42836988, 0.38, 0.06)
+transform = Transform3D(0.9510568, 0.30901697, 0, -0.3090169, 0.9510569, 0, 0, 0, 0.9999994, 0.42836988, 0.38, 0.06)
 mesh = SubResource("BoxMesh_tool")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=667847796]

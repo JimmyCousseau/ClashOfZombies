@@ -18,6 +18,8 @@ enum HeroState {
 @export var idle_wander_max_sec: float = 7.0
 @export var body_rotation_speed: float = 8.0
 
+@export var arm_swing_speed: float = 2.0
+
 var exploration_focus: String = "wood"
 var _state: HeroState = HeroState.IN_VILLAGE
 var _has_move_target: bool = false
@@ -69,7 +71,7 @@ func _physics_process(delta: float) -> void:
 			_exploration_timer -= delta
 			if _exploration_timer <= 0.0:
 				_finish_exploration()
-	
+
 	_update_animation(delta)
 
 
@@ -252,10 +254,10 @@ func _build_hero_visual() -> void:
 	mesh_root.position = Vector3.ZERO
 	mesh_root.rotation = Vector3.ZERO
 	var jacket := _mat(Color(0.18, 0.24, 0.28))
-	var pants := _mat(Color(0.16, 0.18, 0.14))
-	var skin := _mat(Color(0.72, 0.6, 0.48))
-	var bag := _mat(Color(0.32, 0.26, 0.18))
-	var metal := _mat(Color(0.35, 0.38, 0.4), 0.4, 0.3)
+	var skin   := _mat(Color(0.72, 0.6, 0.48))
+	var bag    := _mat(Color(0.32, 0.26, 0.18))
+	var metal  := _mat(Color(0.35, 0.38, 0.4), 0.4, 0.3)
+
 	var torso := MeshInstance3D.new()
 	var torso_mesh := BoxMesh.new()
 	torso_mesh.size = Vector3(0.46, 0.58, 0.28)
@@ -263,6 +265,7 @@ func _build_hero_visual() -> void:
 	torso.material_override = jacket
 	torso.position = Vector3(0, 0.4, 0)
 	mesh_root.add_child(torso)
+
 	var head := MeshInstance3D.new()
 	var head_mesh := SphereMesh.new()
 	head_mesh.radius = 0.22
@@ -271,6 +274,7 @@ func _build_hero_visual() -> void:
 	head.material_override = skin
 	head.position = Vector3(0, 0.84, 0)
 	mesh_root.add_child(head)
+
 	var backpack := MeshInstance3D.new()
 	var backpack_mesh := BoxMesh.new()
 	backpack_mesh.size = Vector3(0.32, 0.4, 0.16)
@@ -278,6 +282,25 @@ func _build_hero_visual() -> void:
 	backpack.material_override = bag
 	backpack.position = Vector3(0, 0.42, -0.2)
 	mesh_root.add_child(backpack)
+
+	var left_arm := MeshInstance3D.new()
+	left_arm.name = "LeftArm"
+	var limb_mesh_l := BoxMesh.new()
+	limb_mesh_l.size = Vector3(0.12, 0.38, 0.12)
+	left_arm.mesh = limb_mesh_l
+	left_arm.material_override = jacket
+	left_arm.position = Vector3(-0.28, 0.38, 0)
+	mesh_root.add_child(left_arm)
+
+	var right_arm := MeshInstance3D.new()
+	right_arm.name = "RightArm"
+	var limb_mesh_r := BoxMesh.new()
+	limb_mesh_r.size = Vector3(0.12, 0.38, 0.12)
+	right_arm.mesh = limb_mesh_r
+	right_arm.material_override = jacket
+	right_arm.position = Vector3(0.28, 0.38, 0)
+	mesh_root.add_child(right_arm)
+
 	var tool := MeshInstance3D.new()
 	var tool_mesh := BoxMesh.new()
 	tool_mesh.size = Vector3(0.1, 0.56, 0.1)
@@ -311,33 +334,36 @@ func _format_time(total_seconds: float) -> String:
 	return "%02d:%02d" % [minutes, seconds]
 
 
-func _update_animation(delta: float) -> void:
+func _update_animation(_delta: float) -> void:
 	_update_arm_state()
-	_update_body_rotation(delta)
+	_update_body_rotation(_delta)
 
 
 func _update_arm_state() -> void:
 	if not _animation_player:
 		return
-	
+
 	if _is_moving:
-		if _animation_player.has_animation("arm_swing_moving") and _animation_player.current_animation != "arm_swing_moving":
-			_animation_player.play("arm_swing_moving")
-	else:
-		if _animation_player.has_animation("arm_idle") and _animation_player.current_animation != "arm_idle":
-			_animation_player.play("arm_idle")
+		if _animation_player.current_animation != "walk_arms":
+			_animation_player.play("walk_arms")
+		
+		_animation_player.speed_scale = arm_swing_speed
+
+	elif _animation_player.current_animation == "walk_arms":
+			_animation_player.seek(0.5)
+			_animation_player.pause()
 
 
 func _update_body_rotation(delta: float) -> void:
 	if velocity.length() < 0.1:
 		return
-	
+
 	var target_angle: float = atan2(velocity.x, velocity.z)
 	var current_angle: float = mesh_root.rotation.y
-	
+
 	var angle_diff: float = angle_difference(current_angle, target_angle)
 	var rotation_step: float = clamp(angle_diff * body_rotation_speed * delta, -PI, PI)
-	
+
 	mesh_root.rotation.y = current_angle + rotation_step
 
 

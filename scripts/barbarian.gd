@@ -5,6 +5,7 @@ extends Unit
 @export var idle_wander_min_sec: float = 2.0
 @export var idle_wander_max_sec: float = 5.0
 @export var patrol_radius: float = 6.0
+@export var arm_swing_speed: float = 2.0
 
 var source_barracks_id: int = 0
 var _guard_home: Vector3 = Vector3.ZERO
@@ -168,10 +169,13 @@ func _update_animation(delta: float) -> void:
 func _update_arm_state() -> void:
 	if not _animation_player:
 		return
-	
+
 	if _is_moving:
-		if _animation_player.has_animation("arm_swing_moving") and _animation_player.current_animation != "arm_swing_moving":
-			_animation_player.play("arm_swing_moving")
-	else:
-		if _animation_player.has_animation("arm_idle") and _animation_player.current_animation != "arm_idle":
-			_animation_player.play("arm_idle")
+		if _animation_player.current_animation != "walking":
+			_animation_player.play("walking")
+		
+		_animation_player.speed_scale = arm_swing_speed
+
+	elif _animation_player.current_animation == "walking":
+			_animation_player.seek(0.5)
+			_animation_player.pause()
