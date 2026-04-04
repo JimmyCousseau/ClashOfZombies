@@ -6,6 +6,7 @@ extends Unit
 @export var idle_wander_max_sec: float = 5.0
 @export var patrol_radius: float = 6.0
 @export var arm_swing_speed: float = 2.0
+@export var barbarian_attack_range: float = 1.2
 
 var source_barracks_id: int = 0
 var _guard_home: Vector3 = Vector3.ZERO
@@ -21,6 +22,7 @@ func _ready() -> void:
 		_build_barbarian_visual()
 	if Engine.is_editor_hint():
 		return
+	attack_range = barbarian_attack_range
 	_animation_player = $AnimationPlayer
 	add_to_group("allies")
 	_pick_target()
