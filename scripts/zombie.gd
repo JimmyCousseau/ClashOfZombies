@@ -56,10 +56,16 @@ func _attack_building(delta: float) -> void:
 	if not is_instance_valid(_target_building):
 		_target_building = null
 		return
+	var approach_pos: Vector3 = _get_building_approach_position(_target_building)
 	var dist: float = global_position.distance_to(_target_building.global_position)
-	var building_range: float = attack_range + _target_building.get_attack_radius()
-	if dist > building_range:
-		_move_to_world(delta, _target_building.global_position, building_range)
+	var approach_dist: float = global_position.distance_to(approach_pos)
+	var building_range: float = _get_building_attack_distance(_target_building, approach_pos)
+	if _is_main_door_target(_target_building):
+		if dist > building_range and approach_dist > 0.18:
+			_move_to_world(delta, approach_pos, 0.08)
+			return
+	elif dist > building_range:
+		_move_to_world(delta, approach_pos, building_range)
 		return
 	
 	_stop_motion()
@@ -174,6 +180,27 @@ func _get_forced_door_target(enemy: Unit, building: VillageBuilding) -> VillageB
 	if enemy_requires_entry or building_requires_entry:
 		return _door_target
 	return null
+
+
+func _get_building_approach_position(building: VillageBuilding) -> Vector3:
+	if _is_main_door_target(building):
+		return GameState.get_door_attack_anchor(global_position)
+	return building.global_position
+
+
+func _get_building_attack_distance(building: VillageBuilding, approach_pos: Vector3) -> float:
+	var attack_dist: float = attack_range + building.get_attack_radius()
+	if _is_main_door_target(building):
+		var anchor_offset := Vector2(
+			approach_pos.x - building.global_position.x,
+			approach_pos.z - building.global_position.z
+		).length()
+		return maxf(attack_dist, anchor_offset + attack_range + 0.2)
+	return attack_dist
+
+
+func _is_main_door_target(building: VillageBuilding) -> bool:
+	return building != null and building.building_type == VillageBuilding.BuildingType.DOOR and building.is_main_village_door()
 
 
 func _build_zombie_visual() -> void:

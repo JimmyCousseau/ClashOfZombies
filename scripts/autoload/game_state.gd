@@ -127,6 +127,12 @@ func get_door_inside_entry() -> Vector3:
 	return get_door_position() - Vector3(0, 0, WALL_THICKNESS * 0.5 + DOOR_PATH_MARGIN)
 
 
+func get_door_attack_anchor(from_world: Vector3) -> Vector3:
+	if is_inside_village(from_world):
+		return get_door_inside_entry()
+	return get_door_outside_entry()
+
+
 func get_outside_spawn_from_origin(origin: Vector3) -> Vector3:
 	var planar := Vector2(origin.x, origin.z)
 	if planar.length() < 0.15:
@@ -438,6 +444,8 @@ func find_path(from_world: Vector3, to_world: Vector3, target_radius: float = 0.
 	var cell_path: Array[Vector2i] = astar.get_id_path(start_walkable, goal_walkable)
 	if cell_path.is_empty():
 		return []
+	if cell_path.size() == 1:
+		return [Vector3(to_world.x, 0.0, to_world.z)]
 	var world_path: Array[Vector3] = []
 	for i in cell_path.size():
 		if i == 0:
@@ -639,6 +647,8 @@ func _collect_building_blockers() -> Array[Dictionary]:
 	for child in village.get_children():
 		if child is VillageBuilding and is_instance_valid(child):
 			var building := child as VillageBuilding
+			if building.is_destroyed:
+				continue
 			var extents: Vector2 = building.get_blocking_half_extents()
 			if extents.x <= 0.01 or extents.y <= 0.01:
 				continue

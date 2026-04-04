@@ -281,6 +281,7 @@ func _reset_idle_wander_timer() -> void:
 
 
 func _pick_idle_destination() -> void:
+	if (game_state == null) return
 	var inner: float = GameState.get_inner_half_extent() - 2.2
 	for i in 8:
 		var candidate := Vector3(randf_range(-inner, inner), 0.0, randf_range(-inner, inner))

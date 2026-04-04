@@ -39,10 +39,10 @@ roughness = 0.95
 
 [sub_resource type="BoxMesh" id="BoxMesh_ground"]
 material = SubResource("Mat_ground")
-size = Vector3(92, 0.28, 92)
+size = Vector3(320, 0.28, 320)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
-size = Vector3(92, 0.28, 92)
+size = Vector3(320, 0.28, 320)
 
 [sub_resource type="LabelSettings" id="LabelSettings_85g3d"]
 

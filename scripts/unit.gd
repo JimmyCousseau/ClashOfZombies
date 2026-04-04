@@ -21,6 +21,7 @@ var _path_refresh_timer: float = 0.0
 var _path_goal: Vector3 = Vector3.ZERO
 var _path_stop_distance: float = -1.0
 var _has_path_goal: bool = false
+var _path_blocked: bool = false
 
 @onready var mesh_root: Node3D = $MeshRoot
 
@@ -95,6 +96,9 @@ func _move_to_world(delta: float, target_pos: Vector3, stop_distance: float = 0.
 	var stop_changed: bool = absf(_path_stop_distance - stop_distance) > 0.1
 	if goal_changed or stop_changed or _path_refresh_timer <= 0.0 or _path_index >= _path.size():
 		_rebuild_path(target_pos, stop_distance)
+	if _path_blocked:
+		_stop_motion()
+		return
 	var waypoint: Vector3 = target_pos
 	if _path_index < _path.size():
 		waypoint = _path[_path_index]
@@ -121,6 +125,7 @@ func _rebuild_path(target_pos: Vector3, stop_distance: float) -> void:
 	_path_refresh_timer = 0.35
 	_path = GameState.find_path(global_position, target_pos, stop_distance)
 	_path_index = 0
+	_path_blocked = _path.is_empty() and global_position.distance_to(target_pos) > stop_distance + 0.35
 
 
 func _stop_motion() -> void:
@@ -135,6 +140,7 @@ func _clear_path() -> void:
 	_path_goal = Vector3.ZERO
 	_path_stop_distance = -1.0
 	_has_path_goal = false
+	_path_blocked = false
 
 
 func _on_death() -> void:
