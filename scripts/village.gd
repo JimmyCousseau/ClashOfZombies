@@ -30,6 +30,8 @@ var _buildings: Array[VillageBuilding] = []
 var _touch_tap_candidates: Dictionary = {}
 var _hero: Node = null
 var _selected_building: VillageBuilding = null
+var _grid_preview_root: Node3D = null
+var _grid_preview_cells: Dictionary = {} # Vector2i -> MeshInstance3D
 
 @onready var camera_rig: Node3D = $"../CameraRig"
 @onready var hud: Control = $"../UI/HUD"
@@ -132,10 +134,12 @@ func _get_editor_preview_building_position(index: int) -> Vector3:
 
 func set_build_mode(t: int) -> void:
 	_build_mode = t
+	_show_grid_preview(t)
 
 
 func clear_build_mode() -> void:
 	_build_mode = -1
+	_hide_grid_preview()
 
 
 func notify_building_removed(c: Vector2i, b: VillageBuilding) -> void:
@@ -381,12 +385,12 @@ func _try_place_at_world(hit: Vector3) -> bool:
 
 func _try_place_tower_at_world(hit: Vector3) -> bool:
 	var tower_positions: Array[Vector3] = [
-		Vector3(-14.575, 0, -14.575),
-		Vector3(14.575, 0, -14.575),
-		Vector3(-14.575, 0, 14.575),
-		Vector3(14.575, 0, 14.575),
-		Vector3(-1.5, 0, 14.575),
-		Vector3(1.5, 0, 14.575),
+		Vector3(-14.575, 1.5, -14.575),
+		Vector3(14.575, 1.5, -14.575),
+		Vector3(-14.575, 1.5, 14.575),
+		Vector3(14.575, 1.5, 14.575),
+		Vector3(-1.5, 1.5, 14.575),
+		Vector3(1.5, 1.5, 14.575),
 	]
 	
 	var snap_distance: float = 2.0
@@ -725,12 +729,12 @@ func _show_grid_preview(building_type: int) -> void:
 
 func _show_tower_preview() -> void:
 	var tower_positions: Array[Vector3] = [
-		Vector3(-14.575, 0, -14.575),
-		Vector3(14.575, 0, -14.575),
-		Vector3(-14.575, 0, 14.575),
-		Vector3(14.575, 0, 14.575),
-		Vector3(-1.5, 0, 14.575),
-		Vector3(1.5, 0, 14.575),
+		Vector3(-14.575, 1.5, -14.575),
+		Vector3(14.575, 1.5, -14.575),
+		Vector3(-14.575, 1.5, 14.575),
+		Vector3(14.575, 1.5, 14.575),
+		Vector3(-1.5, 1.5, 14.575),
+		Vector3(1.5, 1.5, 14.575),
 	]
 	
 	for pos in tower_positions:
